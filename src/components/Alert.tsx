@@ -1,9 +1,6 @@
-// import { useThemeStore } from '@/app/store';
 import { useThemeStore } from '@/store';
-import React from 'react'
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 
 const Alert = () => {
     const currentTheme = useThemeStore((state) => state.theme)

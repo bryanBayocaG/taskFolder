@@ -70,3 +70,4 @@ export const useThemeStore = create<
     }
   )
 );
+// const currentTheme = useThemeStore((state) => state.theme)
