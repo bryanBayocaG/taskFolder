@@ -4,8 +4,28 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { ModeToggle } from "./mode-toggle"
 import { DropdownProfile } from "./DropdownProfile"
+import { useAuthStore } from "@/store"
+import AvatarProf from "./AvatarProf"
+import { signOut } from "firebase/auth"
+import { auth } from "@/lib/firebase"
+import { toast } from "react-toastify"
 
 export default function Navbar() {
+  const currentAuth = useAuthStore((state) => state.currentAuth)
+  const userImg = useAuthStore((state) => state.currentAuthImg)
+  const userEmail = useAuthStore((state) => state.currentAuthEmail)
+  const userName = useAuthStore((state) => state.currentAuthDisplayName)
+  const currentOff = useAuthStore((state) => state.currentOff)
+  const HandleSignOut = async () => {
+    try {
+      await signOut(auth).then(() => {
+        toast.success("Signed out successfully");
+      });
+      currentOff()
+    } catch (error) {
+      console.error("Sign-out failed:", error);
+    }
+  }
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-3">
       <div className="container mx-auto flex h-fit max-w-6xl items-center justify-between px-4 md:px-6">
@@ -58,9 +78,12 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ModeToggle />
-          <div className="hidden md:block">
-            <DropdownProfile />
-          </div>
+          {currentAuth &&
+            <div className="hidden md:block">
+              <DropdownProfile />
+            </div>
+          }
+
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full md:hidden">
@@ -70,6 +93,13 @@ export default function Navbar() {
             </SheetTrigger>
             <SheetContent side="left" className="md:hidden">
               <div className="grid gap-4 p-4">
+                <div className="flex items-center gap-2">
+                  {userImg && <AvatarProf src={userImg} />}
+                  <div>
+                    <h2 className="text-lg font-bold">{userName}</h2>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">{userEmail}</p>
+                  </div>
+                </div>
                 <a
                   href="#"
                   className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
@@ -91,13 +121,16 @@ export default function Navbar() {
                 >
                   Contact
                 </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                {currentAuth &&
+                  <a
+                    onClick={HandleSignOut}
+                    className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
 
-                >
-                  Logout
-                </a>
+                  >
+                    Logout
+                  </a>
+                }
+
               </div>
             </SheetContent>
           </Sheet>

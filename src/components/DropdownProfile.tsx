@@ -8,15 +8,41 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { auth } from "@/lib/firebase";
+import { useAuthStore } from "@/store";
+import { signOut } from "firebase/auth";
+import { toast } from "react-toastify";
+import AvatarProf from "./AvatarProf";
+
 
 export function DropdownProfile() {
+    const currentOff = useAuthStore((state) => state.currentOff)
+    const userImg = useAuthStore((state) => state.currentAuthImg)
+    const userEmail = useAuthStore((state) => state.currentAuthEmail)
+    const userName = useAuthStore((state) => state.currentAuthDisplayName)
+    const HandleSignOut = async () => {
+        try {
+            await signOut(auth).then(() => {
+                toast.success("Signed out successfully");
+            });
+            currentOff()
+        } catch (error) {
+            console.error("Sign-out failed:", error);
+        }
+    }
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline">Open</Button>
+                <div className="flex items-center gap-2">
+                    {userImg && <AvatarProf src={userImg} />}
+                    <Button variant="outline">
+
+                        {userName}
+                    </Button>
+                </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{userEmail}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
                     <DropdownMenuItem>
@@ -27,7 +53,7 @@ export function DropdownProfile() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={HandleSignOut}>
                     Log out
                 </DropdownMenuItem>
             </DropdownMenuContent>

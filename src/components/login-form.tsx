@@ -1,12 +1,39 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { FcGoogle } from "react-icons/fc";
+import { signInWithPopup } from "firebase/auth";
+import { auth, db, googleProvider } from "@/lib/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { useAuthStore } from "@/store";
+import { toast } from "react-toastify";
+
+
+
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
+  const currentOn = useAuthStore((state) => state.currentOn)
+
+  const handleSignInWithGoogle = async () => {
+    try {
+      const userCredential = await signInWithPopup(auth, googleProvider)
+      const userId = userCredential.user.uid;
+      const userImg = userCredential.user.photoURL;
+      const userEmail = userCredential.user.email;
+      const userName = userCredential.user.displayName;
+      const docref = doc(db, "Users", userId)
+      await setDoc(docref, { name: userId }).then(() => {
+        toast.success("Login successfully");
+      })
+      currentOn(userId, userImg, userEmail, userName)
+    } catch (error) {
+      console.log("error", error);
+    }
+  }
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -40,9 +67,8 @@ export function LoginForm({
             Or continue with
           </span>
         </div>
-        <Button variant="outline" className="w-full ">
-
-          Login with GitHub
+        <Button variant="outline" className="w-full" onClick={() => { handleSignInWithGoogle() }}>
+          <FcGoogle />Login with Google
         </Button>
       </div>
       <div className="text-center text-sm">
