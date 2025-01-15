@@ -8,9 +8,16 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "@/components/theme-provider"
+import { useThemeStore } from "@/store"
+import { useEffect } from "react"
 
 export function ModeToggle() {
-    const { setTheme } = useTheme()
+    const { theme, setTheme } = useTheme()
+    const themeSetter = useThemeStore((state) => state.themeSet);
+    useEffect(() => {
+        themeSetter(theme)
+    }, [theme]);
+
 
     return (
         <DropdownMenu>
@@ -28,9 +35,9 @@ export function ModeToggle() {
                 <DropdownMenuItem onClick={() => setTheme("dark")}>
                     Dark
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>
+                {/* <DropdownMenuItem onClick={() => setTheme("system")}>
                     System
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
             </DropdownMenuContent>
         </DropdownMenu>
     )

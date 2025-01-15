@@ -1,14 +1,15 @@
 // import { useThemeStore } from '@/app/store';
+import { useThemeStore } from '@/store';
 import React from 'react'
 import { ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 const Alert = () => {
-    // const currentTheme = useThemeStore((state) => state.theme)
+    const currentTheme = useThemeStore((state) => state.theme)
     return (
         <ToastContainer
-            position="top-center"
+            position="bottom-right"
             autoClose={1200}
             hideProgressBar={false}
             newestOnTop={false}
@@ -17,7 +18,7 @@ const Alert = () => {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="dark"
+            theme={currentTheme}
             transition={Bounce}
         />
     )

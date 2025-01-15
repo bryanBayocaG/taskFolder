@@ -16,6 +16,11 @@ type AuthStore = {
   ) => void;
 };
 
+type ThemeStore = {
+  theme: string;
+  themeSet: (settedTheme: string) => void;
+};
+
 export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
   persist(
     (set) => ({
@@ -45,6 +50,23 @@ export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
     }),
     {
       name: "auth-store", // unique name for the storage
+    }
+  )
+);
+
+export const useThemeStore = create<
+  ThemeStore,
+  [["zustand/persist", ThemeStore]]
+>(
+  persist(
+    (set) => ({
+      theme: "dark",
+      themeSet: (settedTheme) => {
+        set({ theme: settedTheme });
+      },
+    }),
+    {
+      name: "theme-store",
     }
   )
 );
