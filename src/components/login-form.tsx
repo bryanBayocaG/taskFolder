@@ -8,16 +8,15 @@ import { auth, db, googleProvider } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { useAuthStore } from "@/store";
 import { toast } from "react-toastify";
-
-
-
+import { useNavigate } from "react-router-dom";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
-  const currentOn = useAuthStore((state) => state.currentOn)
 
+  const currentOn = useAuthStore((state) => state.currentOn)
+  const navigate = useNavigate();
   const handleSignInWithGoogle = async () => {
     try {
       const userCredential = await signInWithPopup(auth, googleProvider)
@@ -27,6 +26,8 @@ export function LoginForm({
       const userName = userCredential.user.displayName;
       const docref = doc(db, "Users", userId)
       await setDoc(docref, { name: userId }).then(() => {
+        navigate("/mytask");
+      }).then(() => {
         toast.success("Login successfully");
       })
       currentOn(userId, userImg, userEmail, userName)
@@ -34,6 +35,8 @@ export function LoginForm({
       console.log("error", error);
     }
   }
+
+
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">

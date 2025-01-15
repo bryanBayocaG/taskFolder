@@ -9,6 +9,7 @@ import AvatarProf from "./AvatarProf"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { toast } from "react-toastify"
+import { useNavigate } from "react-router-dom"
 
 export default function Navbar() {
   const currentAuth = useAuthStore((state) => state.currentAuth)
@@ -16,9 +17,12 @@ export default function Navbar() {
   const userEmail = useAuthStore((state) => state.currentAuthEmail)
   const userName = useAuthStore((state) => state.currentAuthDisplayName)
   const currentOff = useAuthStore((state) => state.currentOff)
+  const navigate = useNavigate();
   const HandleSignOut = async () => {
     try {
       await signOut(auth).then(() => {
+        navigate("/");
+      }).then(() => {
         toast.success("Signed out successfully");
       });
       currentOff()
