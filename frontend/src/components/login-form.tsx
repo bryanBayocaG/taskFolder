@@ -19,6 +19,7 @@ export function LoginForm({
   const navigate = useNavigate();
   const handleSignInWithGoogle = async () => {
     try {
+      googleProvider.setCustomParameters({ prompt: "select_account" });
       const userCredential = await signInWithPopup(auth, googleProvider)
       const userId = userCredential.user.uid;
       const userImg = userCredential.user.photoURL;
