@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup } from "firebase/auth";
-import { auth, db, googleProvider } from "@/lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { auth, googleProvider } from "@/lib/firebase";
 import { useAuthStore } from "@/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { backEndBaseURL } from "@/utils/baseUrl";
 
 export function LoginForm({
   className,
@@ -25,13 +25,33 @@ export function LoginForm({
       const userImg = userCredential.user.photoURL;
       const userEmail = userCredential.user.email;
       const userName = userCredential.user.displayName;
-      const docref = doc(db, "Users", userId)
-      await setDoc(docref, { name: userId }).then(() => {
-        navigate("/mytask");
-      }).then(() => {
+      const res = await fetch(`${backEndBaseURL}/api/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid: userId,
+          email: userEmail,
+          displayName: userName,
+          photoURL: userImg,
+          authProvider: "google",
+          additionalInfo: {
+            phoneNumber: null,
+            role: "user",
+            isActive: true,
+          },
+        })
+      });
+      if (res.ok) {
+        navigate("/mytask")
         toast.success("Login successfully");
-      })
-      currentOn(userId, userImg, userEmail, userName)
+        currentOn(userId, userImg, userEmail, userName)
+      } else {
+        toast.error("Login failed");
+        console.log(res.status)
+      }
+
     } catch (error) {
       console.log("error", error);
     }

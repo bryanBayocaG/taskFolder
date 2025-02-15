@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/dbConfig";
+import shortURL from "./routes/shortUrl";
 
 dotenv.config();
 
@@ -11,11 +12,13 @@ const app = express();
 app.use(express.json()); // Allow JSON request bodies
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow only frontend origin
+    origin: ["http://localhost:5173", "http://localhost:5000"] /* "*" */, // Allow only frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+
+app.use("/api/", shortURL);
 
 const PORT = process.env.PORT || 5000;
 
