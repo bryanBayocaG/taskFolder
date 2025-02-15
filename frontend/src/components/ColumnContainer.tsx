@@ -1,6 +1,7 @@
-import { Column, ID } from "@/type"
+import { Column, ID, Task } from "@/type"
 import { Button } from "./ui/button";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { CiCirclePlus } from "react-icons/ci";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
 import { useState } from "react";
@@ -9,10 +10,12 @@ interface Props {
     column: Column;
     deleteColumn: (id: ID) => void;
     updateColumn: (id: ID, title: string) => void
+    createTask: (columnID: ID) => void
+    tasks?: Task[];
 }
 
 function ColumnContainer(props: Props) {
-    const { column, deleteColumn, updateColumn } = props;
+    const { column, deleteColumn, updateColumn, createTask, tasks } = props;
     const [editMode, setEditMode] = useState(false)
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -35,7 +38,7 @@ function ColumnContainer(props: Props) {
     }
 
     return (
-        <div ref={setNodeRef} style={myStyle} className="backdrop-blur-[16px] shadow-2xl p-1 w-[350px] h-[500px] rounded-md flex flex-col">
+        <div ref={setNodeRef} style={myStyle} className="backdrop-blur-[16px] shadow-2xl p-1 w-[350px] min:h-[500px] h-fit rounded-md flex flex-col">
             <div {...attributes} {...listeners} onClick={() => { setEditMode(true) }} className="bg-gray-400 dark:bg-gray-900 p-2 rounded-t-md flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <div className="flex justify-center items-center bg-white dark:bg-gray-950 px-2 py-1 text-sm rounded-full">0</div>
@@ -60,10 +63,18 @@ function ColumnContainer(props: Props) {
                     <FaRegTrashAlt className="text-red-700" />
                 </Button>
             </div>
-            <div className="flex flex-grow">
-
+            <div className="flex flex-grow flex-col gap-4 p-3">
+                {tasks?.map((task) => (
+                    <div key={task.id}
+                        className="bg-slate-400 dark:bg-zinc-600 p-2 rounded-md"
+                    >
+                        {task.content}
+                    </div>
+                ))}
             </div>
-            <div>Footer</div>
+            <Button color="primary" size={"sm"} variant="outline" onClick={() => { createTask(column.id) }}>
+                <CiCirclePlus /> Add tasks
+            </Button>
         </div>
     )
 }

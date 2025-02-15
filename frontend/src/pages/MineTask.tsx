@@ -1,6 +1,6 @@
 import ColumnContainer from "@/components/ColumnContainer";
 import { Button } from "@/components/ui/button";
-import { Column, ID } from "@/type";
+import { Column, ID, Task } from "@/type";
 import { useMemo, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor } from "@dnd-kit/core"
@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 function MineTask() {
     const [columns, setColumns] = useState<Column[]>([]);
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
+    const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -24,7 +25,14 @@ function MineTask() {
                 <div className="flex gap-5 mr-5">
                     <SortableContext items={columnsID}>
                         {columns.map((column) => (
-                            <ColumnContainer key={column.id} column={column} deleteColumn={deleteColumn} updateColumn={updateColumn} />
+                            <ColumnContainer
+                                key={column.id}
+                                column={column}
+                                deleteColumn={deleteColumn}
+                                updateColumn={updateColumn}
+                                createTask={createTask}
+                                tasks={tasks.filter((task) => task.columnID === column.id)}
+                            />
                         ))}
                     </SortableContext>
                 </div>
@@ -39,6 +47,7 @@ function MineTask() {
                         column={activeColumn}
                         deleteColumn={deleteColumn}
                         updateColumn={updateColumn}
+                        createTask={createTask}
                     />
                 )}
             </DragOverlay>,
@@ -61,6 +70,14 @@ function MineTask() {
         const filteredColumns = columns.filter((col) => col.id != id);
         setColumns(filteredColumns)
     }
+    function createTask(columnID: ID) {
+        const newTask: Task = {
+            id: generateId(),
+            columnID,
+            content: `Task ${tasks.length + 1}`
+        }
+        setTasks([...tasks, newTask])
+    }
     function updateColumn(id: ID, title: string) {
         const newColumns = columns.map((col) => {
             if (col.id !== id) return col;
@@ -69,6 +86,7 @@ function MineTask() {
         setColumns(newColumns)
 
     }
+
 
     function onDragStartFNC(e: DragStartEvent) {
         console.log("Dragging is happening", e)
