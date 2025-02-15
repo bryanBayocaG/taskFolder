@@ -9,9 +9,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./server.js"
+    "build": "npx tsc",
+    "start": "npx tsc && node ./dist/server.js",
+    "dev": "nodemon"
   },
-  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
