@@ -3,15 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Column, ID, Task } from "@/type";
 import { useMemo, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
-import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor } from "@dnd-kit/core"
+import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import { createPortal } from "react-dom";
+import TaskContainer from "@/components/TaskContainer";
 
 function MineTask() {
     const [columns, setColumns] = useState<Column[]>([]);
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
     const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+    const [activeTask, setActiveTask] = useState<Task | null>(null);
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -20,7 +22,12 @@ function MineTask() {
         })
     )
     return (
-        <DndContext onDragStart={onDragStartFNC} onDragEnd={onDragEndFNC} sensors={sensors}>
+        <DndContext
+            onDragStart={onDragStartFNC}
+            onDragEnd={onDragEndFNC}
+            sensors={sensors}
+            onDragOver={onDrageOverFNC}
+        >
             <div className="m-auto flex min-h-[600px] w-full items-center overflow-x-auto overflow-y-hidden px-2">
                 <div className="flex gap-5 mr-5">
                     <SortableContext items={columnsID}>
@@ -33,6 +40,7 @@ function MineTask() {
                                 createTask={createTask}
                                 tasks={tasks.filter((task) => task.columnID === column.id)}
                                 deleteTask={deleteTask}
+                                updateTask={updateTask}
                             />
                         ))}
                     </SortableContext>
@@ -51,8 +59,12 @@ function MineTask() {
                         createTask={createTask}
                         tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
                         deleteTask={deleteTask}
+                        updateTask={updateTask}
                     />
                 )}
+                {activeTask &&
+                    <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
+                }
             </DragOverlay>,
                 document.body
             )}
@@ -72,7 +84,10 @@ function MineTask() {
     function deleteColumn(id: ID) {
         const filteredColumns = columns.filter((col) => col.id != id);
         setColumns(filteredColumns)
+        const newTask = tasks.filter(t => t.columnID != id);
+        setTasks(newTask)
     }
+
     function createTask(columnID: ID) {
         const newTask: Task = {
             id: generateId(),
@@ -84,6 +99,14 @@ function MineTask() {
     function deleteTask(id: ID) {
         const newTasks = tasks.filter((task) => task.id !== id);
         setTasks(newTasks)
+    }
+    function updateTask(id: ID, content: string) {
+        const newTask = tasks.map((task) => {
+            if (task.id !== id) return task;
+            return { ...task, content }
+        });
+        setTasks(newTask)
+
     }
     function updateColumn(id: ID, title: string) {
         const newColumns = columns.map((col) => {
@@ -101,8 +124,14 @@ function MineTask() {
             setActiveColumn(e.active.data.current.column);
             return
         }
+        if (e.active.data.current?.type === "Task") {
+            setActiveTask(e.active.data.current.task);
+            return
+        }
     }
     function onDragEndFNC(e: DragEndEvent) {
+        setActiveColumn(null)
+        setActiveTask(null)
         const { active, over } = e;
         if (!over) return;
 
@@ -116,6 +145,40 @@ function MineTask() {
             const overColumnIndex = columns.findIndex((col) => col.id === overColumnID)
             return arrayMove(columns, activeColumnIndex, overColumnIndex)
         })
+    }
+    function onDrageOverFNC(e: DragOverEvent) {
+        const { active, over } = e;
+        if (!over) return;
+
+        const activeTaskID = active.id;
+        const overTaskID = over.id;
+
+        if (activeTaskID === overTaskID) return;
+        const isActiveTask = active.data.current?.type === "Task";
+        const isOverTask = over.data.current?.type === "Task";
+
+        if (!isActiveTask) return;
+
+        //dropping task over other task
+        if (isActiveTask && isOverTask) {
+            setTasks((tasks) => {
+                const activeIndex = tasks.findIndex(t => t.id === activeTaskID)
+                const overIndex = tasks.findIndex(t => t.id === overTaskID)
+                tasks[activeIndex].columnID = tasks[overIndex].columnID;
+                return arrayMove(tasks, activeIndex, overIndex)
+            })
+        }
+
+        const isOverColumn = over.data.current?.type === "Column"
+        //dropping task over other column
+        if (isActiveTask && isOverColumn) {
+            setTasks((tasks) => {
+                const activeIndex = tasks.findIndex(t => t.id === activeTaskID)
+                tasks[activeIndex].columnID = overTaskID;
+                return arrayMove(tasks, activeIndex, activeIndex)
+            })
+        }
+
     }
 
 }
