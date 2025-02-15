@@ -27,10 +27,11 @@ function ColumnContainer(props: Props) {
             column,
         },
         disabled: editMode
+
     })
     const myStyle = {
         transition,
-        transform: CSS.Transform.toString(transform)
+        transform: CSS.Translate.toString(transform)
     }
     if (isDragging) {
         return (
