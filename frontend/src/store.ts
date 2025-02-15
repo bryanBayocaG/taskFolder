@@ -49,7 +49,7 @@ export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
       },
     }),
     {
-      name: "auth-store", // unique name for the storage
+      name: "auth-store",
     }
   )
 );
