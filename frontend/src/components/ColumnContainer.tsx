@@ -5,17 +5,19 @@ import { CiCirclePlus } from "react-icons/ci";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
 import { useState } from "react";
+import TaskContainer from "./TaskContainer";
 
 interface Props {
     column: Column;
     deleteColumn: (id: ID) => void;
-    updateColumn: (id: ID, title: string) => void
-    createTask: (columnID: ID) => void
-    tasks?: Task[];
+    updateColumn: (id: ID, title: string) => void;
+    createTask: (columnID: ID) => void;
+    tasks: Task[];
+    deleteTask: (id: ID) => void;
 }
 
 function ColumnContainer(props: Props) {
-    const { column, deleteColumn, updateColumn, createTask, tasks } = props;
+    const { column, deleteColumn, updateColumn, createTask, tasks, deleteTask } = props;
     const [editMode, setEditMode] = useState(false)
 
     const { setNodeRef, attributes, listeners, transform, transition, isDragging } = useSortable({
@@ -32,7 +34,7 @@ function ColumnContainer(props: Props) {
     }
     if (isDragging) {
         return (
-            <div ref={setNodeRef} style={myStyle} className="opacity-30 border-2 border-rose-500 backdrop-blur-[16px] shadow-2xl p-1 w-[350px] h-[500px] rounded-md flex flex-col">
+            <div ref={setNodeRef} style={myStyle} className="opacity-30 border-2 border-blue-700 backdrop-blur-[16px] shadow-2xl p-1 w-[350px] h-[500px] rounded-md flex flex-col">
             </div>
         )
     }
@@ -44,7 +46,7 @@ function ColumnContainer(props: Props) {
                     <div className="flex justify-center items-center bg-white dark:bg-gray-950 px-2 py-1 text-sm rounded-full">0</div>
                     {!editMode ? column.title :
                         <input
-                            className="bg-gray-400 dark:bg-gray-900 focus:border-red-400 border rounded outline-none"
+                            className="bg-gray-400 dark:bg-gray-900 focus:border-blue-700 border rounded outline-none"
                             value={column.title}
                             onChange={e => updateColumn(column.id, e.target.value)}
                             autoFocus
@@ -64,12 +66,8 @@ function ColumnContainer(props: Props) {
                 </Button>
             </div>
             <div className="flex flex-grow flex-col gap-4 p-3">
-                {tasks?.map((task) => (
-                    <div key={task.id}
-                        className="bg-slate-400 dark:bg-zinc-600 p-2 rounded-md"
-                    >
-                        {task.content}
-                    </div>
+                {tasks.map((task) => (
+                    <TaskContainer task={task} deleteTask={deleteTask} />
                 ))}
             </div>
             <Button color="primary" size={"sm"} variant="outline" onClick={() => { createTask(column.id) }}>

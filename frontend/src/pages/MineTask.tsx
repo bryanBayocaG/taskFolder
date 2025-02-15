@@ -32,6 +32,7 @@ function MineTask() {
                                 updateColumn={updateColumn}
                                 createTask={createTask}
                                 tasks={tasks.filter((task) => task.columnID === column.id)}
+                                deleteTask={deleteTask}
                             />
                         ))}
                     </SortableContext>
@@ -48,6 +49,8 @@ function MineTask() {
                         deleteColumn={deleteColumn}
                         updateColumn={updateColumn}
                         createTask={createTask}
+                        tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
+                        deleteTask={deleteTask}
                     />
                 )}
             </DragOverlay>,
@@ -77,6 +80,10 @@ function MineTask() {
             content: `Task ${tasks.length + 1}`
         }
         setTasks([...tasks, newTask])
+    }
+    function deleteTask(id: ID) {
+        const newTasks = tasks.filter((task) => task.id !== id);
+        setTasks(newTasks)
     }
     function updateColumn(id: ID, title: string) {
         const newColumns = columns.map((col) => {
