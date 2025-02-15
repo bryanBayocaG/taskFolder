@@ -20,11 +20,11 @@ function MineTask() {
     )
     return (
         <DndContext onDragStart={onDragStartFNC} onDragEnd={onDragEndFNC} sensors={sensors}>
-            <div className="m-auto flex min-h-[87svh] w-full items-center overflow-x-auto overflow-y-hidden px-2">
+            <div className="m-auto flex min-h-[600px] w-full items-center overflow-x-auto overflow-y-hidden px-2">
                 <div className="flex gap-5 mr-5">
                     <SortableContext items={columnsID}>
                         {columns.map((column) => (
-                            <ColumnContainer key={column.id} column={column} deleteColumn={deleteColumn} />
+                            <ColumnContainer key={column.id} column={column} deleteColumn={deleteColumn} updateColumn={updateColumn} />
                         ))}
                     </SortableContext>
                 </div>
@@ -38,6 +38,7 @@ function MineTask() {
                     <ColumnContainer
                         column={activeColumn}
                         deleteColumn={deleteColumn}
+                        updateColumn={updateColumn}
                     />
                 )}
             </DragOverlay>,
@@ -60,6 +61,15 @@ function MineTask() {
         const filteredColumns = columns.filter((col) => col.id != id);
         setColumns(filteredColumns)
     }
+    function updateColumn(id: ID, title: string) {
+        const newColumns = columns.map((col) => {
+            if (col.id !== id) return col;
+            return { ...col, title }
+        });
+        setColumns(newColumns)
+
+    }
+
     function onDragStartFNC(e: DragStartEvent) {
         console.log("Dragging is happening", e)
         if (e.active.data.current?.type === "Column") {
@@ -82,6 +92,7 @@ function MineTask() {
             return arrayMove(columns, activeColumnIndex, overColumnIndex)
         })
     }
+
 }
 
 
