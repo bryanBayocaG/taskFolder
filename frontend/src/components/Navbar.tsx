@@ -10,6 +10,7 @@ import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
+import SignInFormDrawer from "./signin-form-drawer"
 
 export default function Navbar() {
   const currentAuth = useAuthStore((state) => state.currentAuth)
@@ -38,7 +39,6 @@ export default function Navbar() {
             <img src="/KanbanDrk.svg" alt="" className="hidden dark:block" />
             <img src="/Kanban.svg" alt="" className="dark:hidden" />
           </div>
-          {/* <MountainIcon className="h-6 w-6" /> */}
           <span className="font-bold">Task Folder</span>
         </a>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -87,10 +87,12 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
           <ModeToggle />
-          {currentAuth &&
+          {currentAuth ?
             <div className="hidden md:block">
               <DropdownProfile />
             </div>
+            :
+            <SignInFormDrawer variant={"bordered"} className="border-2 border-sky-500 hover:bg-sky-400 hover:text-white" />
           }
 
           <Sheet>

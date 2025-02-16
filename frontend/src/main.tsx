@@ -3,14 +3,16 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { ThemeProvider } from "@/components/theme-provider"
+import { HeroUIProvider } from '@heroui/react'
+import Footer from './components/Footer.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <App />
-      <div>
-        Footer
-      </div>
+      <HeroUIProvider>
+        <App />
+        <Footer />
+      </HeroUIProvider>
     </ThemeProvider>
   </StrictMode>,
 )

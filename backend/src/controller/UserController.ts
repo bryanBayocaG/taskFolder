@@ -11,6 +11,14 @@ export const createUser = async (req: Request, res: Response) => {
         message: "Missing required fields: uid and authProvider are required.",
       });
     }
+    const userExist = await User.findOne({ uid });
+    if (userExist) {
+      return res.status(200).json({
+        success: true,
+        message: "User already exists",
+        data: userExist,
+      });
+    }
     const newUser = new User({
       uid,
       email,
@@ -19,24 +27,17 @@ export const createUser = async (req: Request, res: Response) => {
       authProvider,
       additionalInfo,
     });
-
     await newUser.save();
     res
       .status(201)
       .json({ success: true, message: "User Created", data: newUser });
-  } catch (error: any) {
-    if (error.name === "ValidationError") {
+  } catch (error) {
+    if (error instanceof Error) {
       return res.status(400).json({
         success: false,
         message: "Validation Error",
         error: error.message,
       });
     }
-
-    res.status(500).json({
-      success: false,
-      message: "User not created",
-      error: error.message,
-    });
   }
 };
