@@ -8,6 +8,7 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import { createPortal } from "react-dom";
 import TaskContainer from "@/components/TaskContainer";
 import { useAuthStore } from "@/store";
+import FobiddenPage from "@/components/FobiddenPage";
 
 function MineTask() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
@@ -24,10 +25,8 @@ function MineTask() {
         })
     )
     return (
-
         <>
             {currentAuth ?
-
                 <DndContext
                     onDragStart={onDragStartFNC}
                     onDragEnd={onDragEndFNC}
@@ -76,9 +75,7 @@ function MineTask() {
                     )}
                 </DndContext>
                 :
-                <div className="m-auto flex h-full w-full items-center overflow-x-auto overflow-y-hidden px-2">
-                    not auth
-                </div>
+                <FobiddenPage />
             }
 
         </>
