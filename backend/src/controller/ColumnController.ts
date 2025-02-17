@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Column from "../model/Column.model";
 import User from "../model/User.model";
-import { json } from "stream/consumers";
 
 export const addColumn = async (req: Request, res: Response) => {
   try {
@@ -56,6 +55,52 @@ export const getColumns = async (req: Request, res: Response) => {
       return res
         .status(500)
         .json({ message: "error mo show mo", typeOfError: error.message });
+    }
+  }
+};
+
+export const deleteColumns = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const result = await Column.deleteOne({ _id: id });
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "column not found or not deleted" });
+    }
+    return res.status(200).json({ message: "column deleted successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res
+        .status(500)
+        .json({ message: "error mo show mo", error: error.message });
+    }
+  }
+};
+
+export const updateColumn = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    //updates lang kase yung key sa body same lang sa field na papalitan, short hand principle
+    const updatedColumn = await Column.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedColumn) {
+      return res.status(404).json({ message: "Column not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Column updated successfully", data: updatedColumn });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
     }
   }
 };

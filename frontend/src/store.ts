@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { Column, ID } from "./type";
 
 type AuthStore = {
   currentAuth: boolean;
@@ -19,6 +20,14 @@ type AuthStore = {
 type ThemeStore = {
   theme: string;
   themeSet: (settedTheme: string) => void;
+};
+
+type ColumnStore = {
+  columns: Column[];
+  setColumns: (columns: Column[]) => void;
+  addColumn: (column: Column) => void;
+  updateColumn: (id: ID, title: string) => void;
+  deleteColumn: (id: ID) => void;
 };
 
 export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
@@ -67,6 +76,36 @@ export const useThemeStore = create<
     }),
     {
       name: "theme-store",
+    }
+  )
+);
+
+export const useColumnStore = create<
+  ColumnStore,
+  [["zustand/persist", ColumnStore]]
+>(
+  persist(
+    (set) => ({
+      columns: [],
+      setColumns: (newColumns) => set({ columns: newColumns }),
+
+      addColumn: (column) =>
+        set((state) => ({ columns: [...state.columns, column] })),
+
+      updateColumn: (id, title) =>
+        set((state) => ({
+          columns: state.columns.map((col) =>
+            col.id === id ? { ...col, title } : col
+          ),
+        })),
+
+      deleteColumn: (id) =>
+        set((state) => ({
+          columns: state.columns.filter((col) => col.id !== id),
+        })),
+    }),
+    {
+      name: "column-store",
     }
   )
 );

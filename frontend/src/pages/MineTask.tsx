@@ -1,20 +1,21 @@
 import ColumnContainer from "@/components/ColumnContainer";
-import { Button } from "@/components/ui/button";
 import { BackEndColumnData, Column, ID, Task } from "@/type";
 import { useEffect, useMemo, useState } from "react";
-import { CiCirclePlus } from "react-icons/ci";
 import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import { createPortal } from "react-dom";
 import TaskContainer from "@/components/TaskContainer";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useColumnStore } from "@/store";
 import FobiddenPage from "@/components/FobiddenPage";
 import { backEndBaseURL } from "@/utils/baseUrl";
+import { Spinner } from "@heroui/react";
+import ModalPopUp from "@/components/Modal";
 
 function MineTask() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
-    const [columns, setColumns] = useState<Column[]>([]);
+    const columns = useColumnStore((state) => state.columns)
+    const setColumns = useColumnStore((state) => state.setColumns);
     const [isLoading, setLoading] = useState(false);
 
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -66,60 +67,59 @@ function MineTask() {
         fetchColumns();
     }, [currentAuthUID])
 
-
-
     return (
         <>
             {currentAuth ?
                 <>
-                    {isLoading && <p>Loading....</p>}
-                    <DndContext
-                        onDragStart={onDragStartFNC}
-                        onDragEnd={onDragEndFNC}
-                        sensors={sensors}
-                        onDragOver={onDrageOverFNC}
-                    >
-                        <div className="m-auto flex h-full w-full items-center overflow-x-auto overflow-y-hidden px-2">
-                            <div className="flex gap-5 mr-5">
-                                <SortableContext items={columnsID}>
-                                    {columns.map((column) => (
-                                        <ColumnContainer
-                                            key={column.id}
-                                            column={column}
-                                            deleteColumn={deleteColumn}
-                                            updateColumn={updateColumn}
-                                            createTask={createTask}
-                                            tasks={tasks.filter((task) => task.columnID === column.id)}
-                                            deleteTask={deleteTask}
-                                            updateTask={updateTask}
-                                        />
-                                    ))}
-                                </SortableContext>
-                            </div>
-                            <Button onClick={CreateColumn} variant="outline" className="w-40">
-                                <CiCirclePlus />
-                                Add another list
-                            </Button>
+                    {isLoading ?
+                        <div className="flex h-full w-full justify-center px-2">
+                            <Spinner size="lg" color="primary" />
                         </div>
-                        {createPortal(<DragOverlay>
-                            {activeColumn && (
-                                <ColumnContainer
-                                    column={activeColumn}
-                                    deleteColumn={deleteColumn}
-                                    updateColumn={updateColumn}
-                                    createTask={createTask}
-                                    tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
-                                    deleteTask={deleteTask}
-                                    updateTask={updateTask}
-                                />
+                        :
+
+                        <DndContext
+                            onDragStart={onDragStartFNC}
+                            onDragEnd={onDragEndFNC}
+                            sensors={sensors}
+                            onDragOver={onDrageOverFNC}
+                        >
+                            <div className="m-auto flex h-full w-full items-center overflow-x-auto overflow-y-hidden px-2">
+                                <div className="flex gap-5 mr-5">
+                                    <SortableContext items={columnsID}>
+                                        {columns.map((column) => (
+                                            <ColumnContainer
+                                                key={column.id}
+                                                column={column}
+                                                updateColumn={updateColumn}
+                                                createTask={createTask}
+                                                tasks={tasks.filter((task) => task.columnID === column.id)}
+                                                deleteTask={deleteTask}
+                                                updateTask={updateTask}
+                                            />
+                                        ))}
+                                    </SortableContext>
+                                </div>
+                                <ModalPopUp name="Add another list" useFor="addColumn" />
+                            </div>
+                            {createPortal(<DragOverlay>
+                                {activeColumn && (
+                                    <ColumnContainer
+                                        column={activeColumn}
+                                        updateColumn={updateColumn}
+                                        createTask={createTask}
+                                        tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
+                                        deleteTask={deleteTask}
+                                        updateTask={updateTask}
+                                    />
+                                )}
+                                {activeTask &&
+                                    <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
+                                }
+                            </DragOverlay>,
+                                document.body
                             )}
-                            {activeTask &&
-                                <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
-                            }
-                        </DragOverlay>,
-                            document.body
-                        )}
-                    </DndContext>
+                        </DndContext>
+                    }
                 </>
                 :
                 <FobiddenPage />
@@ -128,21 +128,8 @@ function MineTask() {
         </>
     )
 
-    function CreateColumn() {
-        const columnToAdd: Column = {
-            id: generateId(),
-            title: `Column ${columns.length + 1}`
-        }
-        setColumns([...columns, columnToAdd])
-    }
     function generateId() {
         return Math.floor(Math.random() * 1000)
-    }
-    function deleteColumn(id: ID) {
-        const filteredColumns = columns.filter((col) => col.id != id);
-        setColumns(filteredColumns)
-        const newTask = tasks.filter(t => t.columnID != id);
-        setTasks(newTask)
     }
 
     function createTask(columnID: ID) {
