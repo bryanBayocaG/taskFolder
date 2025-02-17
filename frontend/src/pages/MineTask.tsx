@@ -1,7 +1,7 @@
 import ColumnContainer from "@/components/ColumnContainer";
 import { Button } from "@/components/ui/button";
-import { Column, ID, Task } from "@/type";
-import { useMemo, useState } from "react";
+import { BackEndColumnData, Column, ID, Task } from "@/type";
+import { useEffect, useMemo, useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent } from "@dnd-kit/core"
 import { arrayMove, SortableContext } from '@dnd-kit/sortable';
@@ -9,10 +9,14 @@ import { createPortal } from "react-dom";
 import TaskContainer from "@/components/TaskContainer";
 import { useAuthStore } from "@/store";
 import FobiddenPage from "@/components/FobiddenPage";
+import { backEndBaseURL } from "@/utils/baseUrl";
 
 function MineTask() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
+    const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const [columns, setColumns] = useState<Column[]>([]);
+    const [isLoading, setLoading] = useState(false);
+
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
     const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -24,56 +28,99 @@ function MineTask() {
             }
         })
     )
+
+    useEffect(() => {
+        const fetchColumns = async () => {
+            try {
+                setLoading(true);
+                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+                if (!res.ok) {
+                    throw new Error('Failed to fetch columns');
+                }
+                const data = await res.json()
+
+                if (data.success) {
+                    // Map and exclude unwanted fields
+                    const transformedColumns = data.data.map((column: BackEndColumnData) => ({
+                        id: column._id,             // Rename _id to id
+                        title: column.columnName,   // Rename columnName to title
+                    }));
+
+                    setColumns(transformedColumns);
+                } else {
+                    throw new Error('No data found');
+                }
+            } catch (error) {
+                if (error instanceof Error) {
+                    console.log(error.message)
+                }
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchColumns();
+    }, [currentAuthUID])
+
+
+
     return (
         <>
             {currentAuth ?
-                <DndContext
-                    onDragStart={onDragStartFNC}
-                    onDragEnd={onDragEndFNC}
-                    sensors={sensors}
-                    onDragOver={onDrageOverFNC}
-                >
-                    <div className="m-auto flex h-full w-full items-center overflow-x-auto overflow-y-hidden px-2">
-                        <div className="flex gap-5 mr-5">
-                            <SortableContext items={columnsID}>
-                                {columns.map((column) => (
-                                    <ColumnContainer
-                                        key={column.id}
-                                        column={column}
-                                        deleteColumn={deleteColumn}
-                                        updateColumn={updateColumn}
-                                        createTask={createTask}
-                                        tasks={tasks.filter((task) => task.columnID === column.id)}
-                                        deleteTask={deleteTask}
-                                        updateTask={updateTask}
-                                    />
-                                ))}
-                            </SortableContext>
+                <>
+                    {isLoading && <p>Loading....</p>}
+                    <DndContext
+                        onDragStart={onDragStartFNC}
+                        onDragEnd={onDragEndFNC}
+                        sensors={sensors}
+                        onDragOver={onDrageOverFNC}
+                    >
+                        <div className="m-auto flex h-full w-full items-center overflow-x-auto overflow-y-hidden px-2">
+                            <div className="flex gap-5 mr-5">
+                                <SortableContext items={columnsID}>
+                                    {columns.map((column) => (
+                                        <ColumnContainer
+                                            key={column.id}
+                                            column={column}
+                                            deleteColumn={deleteColumn}
+                                            updateColumn={updateColumn}
+                                            createTask={createTask}
+                                            tasks={tasks.filter((task) => task.columnID === column.id)}
+                                            deleteTask={deleteTask}
+                                            updateTask={updateTask}
+                                        />
+                                    ))}
+                                </SortableContext>
+                            </div>
+                            <Button onClick={CreateColumn} variant="outline" className="w-40">
+                                <CiCirclePlus />
+                                Add another list
+                            </Button>
                         </div>
-                        <Button onClick={CreateColumn} variant="outline" className="w-40">
-                            <CiCirclePlus />
-                            Add another list
-                        </Button>
-                    </div>
-                    {createPortal(<DragOverlay>
-                        {activeColumn && (
-                            <ColumnContainer
-                                column={activeColumn}
-                                deleteColumn={deleteColumn}
-                                updateColumn={updateColumn}
-                                createTask={createTask}
-                                tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
-                                deleteTask={deleteTask}
-                                updateTask={updateTask}
-                            />
+                        {createPortal(<DragOverlay>
+                            {activeColumn && (
+                                <ColumnContainer
+                                    column={activeColumn}
+                                    deleteColumn={deleteColumn}
+                                    updateColumn={updateColumn}
+                                    createTask={createTask}
+                                    tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
+                                    deleteTask={deleteTask}
+                                    updateTask={updateTask}
+                                />
+                            )}
+                            {activeTask &&
+                                <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
+                            }
+                        </DragOverlay>,
+                            document.body
                         )}
-                        {activeTask &&
-                            <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
-                        }
-                    </DragOverlay>,
-                        document.body
-                    )}
-                </DndContext>
+                    </DndContext>
+                </>
                 :
                 <FobiddenPage />
             }

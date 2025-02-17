@@ -10,3 +10,9 @@ export type Task = {
   columnID: ID;
   content: string;
 };
+
+export type BackEndColumnData = {
+  _id: ID;
+  columnName: string;
+  createdBy: string;
+};
