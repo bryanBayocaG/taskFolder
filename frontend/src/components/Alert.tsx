@@ -7,7 +7,7 @@ const Alert = () => {
     return (
         <ToastContainer
             position="bottom-right"
-            autoClose={1200}
+            autoClose={2500}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick

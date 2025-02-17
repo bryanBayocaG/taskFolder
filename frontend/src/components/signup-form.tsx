@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup, User } from "firebase/auth";
+import { signInWithPopup, User, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, googleProvider } from "@/lib/firebase";
 import { useAuthStore } from "@/store";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import SignInFormDrawer from "./signin-form-drawer";
+import { useState } from "react";
 
 export function LoginForm({
   className,
@@ -18,6 +19,56 @@ export function LoginForm({
 
   const currentOn = useAuthStore((state) => state.currentOn)
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const userCredentails = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCredentails.user
+      if (!user) {
+        toast.error("Error, no user created");
+        return
+      }
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        password: password,
+        displayName: user.displayName,
+        photoURL: user.photoURL,
+        authProvider: "email-password",
+        additionalInfo: {
+          phoneNumber: null,
+          role: "user",
+          isActive: true,
+        },
+      };
+      const res = await fetch(`${backEndBaseURL}/api/user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+      });
+      await handleApiResponse(res, user);
+      setEmail("")
+      setPassword("")
+    } catch (error) {
+      if (error instanceof Error) {
+        switch (error.message) {
+          case "Firebase: Error (auth/invalid-email).":
+            toast.warning("Provided email is invalid");
+            break;
+          case "Firebase: Password should be at least 6 characters (auth/weak-password).":
+            toast.warning("Provided password is weak")
+            break;
+          case "Firebase: Error (auth/email-already-in-use).":
+            toast.warning("Provided email is already in-use");
+            break;
+          default:
+            console.log(error.message)
+        }
+      }
+    }
+  }
   const handleSignInWithGoogle = async () => {
     try {
       googleProvider.setCustomParameters({ prompt: "select_account" });
@@ -27,6 +78,7 @@ export function LoginForm({
       const userData = {
         uid: user.uid,
         email: user.email,
+        password: null,
         displayName: user.displayName,
         photoURL: user.photoURL,
         authProvider: "google",
@@ -52,8 +104,7 @@ export function LoginForm({
     const data = await res.json();
     if (res.ok) {
       if (data.message === "User already exists") {
-        toast.info("User already exists. Please proceed to Log in");
-        console.log("User already exists, stopping further execution.");
+        toast.info("Email is used. Please proceed to Log in");
         return;
       }
       navigate("/mytask");
@@ -68,7 +119,7 @@ export function LoginForm({
 
   return (
     <>
-      <form className={cn("flex flex-col gap-6", className)} {...props}>
+      <form className={cn("flex flex-col gap-6", className)} {...props} onSubmit={handleSubmit}>
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 className="text-2xl font-bold">Sign up for account</h1>
           <p className="text-balance text-sm text-slate-500 dark:text-slate-400">
@@ -78,14 +129,22 @@ export function LoginForm({
         <div className="grid gap-6">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required />
+            <Input id="email" type="email" placeholder="m@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+            />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center">
               <Label htmlFor="password">Password</Label>
 
             </div>
-            <Input id="password" type="password" required />
+            <Input id="password" type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
           </div>
           <Button type="submit" className="w-full bg-[#369BEB] hover:bg-[#3666eb]">
             Sign up
@@ -95,13 +154,11 @@ export function LoginForm({
               Or continue with
             </span>
           </div>
-
         </div>
-
       </form>
       <div className="mt-2">
         <Button variant="outline" className="w-full" onClick={() => { handleSignInWithGoogle() }}>
-          <FcGoogle />Sign up with Google
+          <FcGoogle />Sign in with Google
         </Button>
         <div className="text-center text-sm mt-2">
           Already have an account?{" "}

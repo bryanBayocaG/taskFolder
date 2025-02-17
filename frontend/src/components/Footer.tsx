@@ -9,7 +9,7 @@ function Footer() {
                         <img src="/KanbanDrk.svg" alt="" className="hidden dark:block" />
                         <img src="/Kanban.svg" alt="" className="dark:hidden" />
                     </div>
-                    <p>
+                    <p className='font-bold'>
                         Task Folder
                     </p>
                 </div>
@@ -26,7 +26,7 @@ function Footer() {
             </div>
             <div className='flex-[1] flex flex-col  gap-5'>
                 <p className='text-gray-600 text-center'>Technology used</p>
-                <img src="https://skillicons.dev/icons?i=react,typescript,express,tailwind,js,firebase,mongodb" />
+                <img className='pointer-events-none' src="https://skillicons.dev/icons?i=react,typescript,express,tailwind,js,firebase,mongodb" />
             </div>
         </div>
     )
