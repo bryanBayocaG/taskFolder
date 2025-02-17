@@ -2,7 +2,7 @@ import React from 'react'
 
 function Footer() {
     return (
-        <div className='flex p-5'>
+        <div className='flex p-5 h-fit'>
             <div className='flex-[1] '>
                 <div className='flex items-center'>
                     <div className="h-10 w-10 md:h-20 md:w-20 ">

@@ -10,16 +10,16 @@ function Home() {
                     </div>
                 </div>
             </div>
-            <div className="relative hidden bg-muted lg:block">
+            <div className="relative hidden bg-muted lg:block z-10">
                 <img
                     src="/MYTlight.png"
                     alt="Image"
-                    className="absolute inset-0 h-full w-full object-cover dark:hidden"
+                    className="absolute h-full w-full object-cover dark:hidden"
                 />
                 <img
                     src="/MYTdark.png"
                     alt="Image"
-                    className="hidden absolute inset-0 h-full w-full object-cover dark:block"
+                    className="hidden absolute  h-full w-full object-cover dark:block"
                 />
             </div>
         </div>

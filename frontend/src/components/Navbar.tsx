@@ -32,7 +32,7 @@ export default function Navbar() {
     }
   }
   return (
-    <header className=" w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-3">
+    <header className="absolute w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-3 z-[15]">
       <div className="container mx-auto flex h-fit max-w-6xl items-center justify-between px-4 md:px-6">
         <a href={currentAuth ? "/mytask" : "/"} className="flex items-center gap-2" >
           <div className="h-10 w-10 md:h-20 md:w-20 ">
