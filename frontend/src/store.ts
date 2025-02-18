@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Column, ID } from "./type";
+import { arrayMove } from "@dnd-kit/sortable";
 
 type AuthStore = {
   currentAuth: boolean;
@@ -28,6 +29,7 @@ type ColumnStore = {
   addColumn: (column: Column) => void;
   updateColumn: (id: ID, title: string) => void;
   deleteColumn: (id: ID) => void;
+  moveColumn: (activeColumnID: ID, overColumnID: ID) => void;
 };
 
 export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
@@ -103,6 +105,22 @@ export const useColumnStore = create<
         set((state) => ({
           columns: state.columns.filter((col) => col.id !== id),
         })),
+
+      moveColumn: (activeColumnID, overColumnID) =>
+        set((state) => {
+          const activeIndex = state.columns.findIndex(
+            (col) => col.id === activeColumnID
+          );
+          const overIndex = state.columns.findIndex(
+            (col) => col.id === overColumnID
+          );
+
+          if (activeIndex === -1 || overIndex === -1) return state; // Prevent errors
+
+          return {
+            columns: arrayMove(state.columns, activeIndex, overIndex),
+          };
+        }),
     }),
     {
       name: "column-store",

@@ -5,6 +5,7 @@ import {
   addColumn,
   deleteColumns,
   getColumns,
+  reorderColumns,
   updateColumn,
 } from "../controller/ColumnController";
 
@@ -18,5 +19,7 @@ router.post("/user/:uid/column", addColumn);
 router.get("/user/:uid/column", getColumns);
 router.delete("/user/:uid/column/:id", deleteColumns);
 router.patch("/user/:uid/column/:id", updateColumn);
+
+router.patch("/user/:uid/column/reorder/:activeID/:overID", reorderColumns);
 
 export default router;

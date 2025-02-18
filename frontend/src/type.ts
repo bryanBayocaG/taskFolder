@@ -3,6 +3,7 @@ export type ID = string | number;
 export type Column = {
   id: ID;
   title: string;
+  position: number;
 };
 
 export type Task = {
@@ -14,5 +15,6 @@ export type Task = {
 export type BackEndColumnData = {
   _id: ID;
   columnName: string;
+  position: number;
   createdBy: string;
 };

@@ -46,10 +46,10 @@ function MineTask() {
                 const data = await res.json()
 
                 if (data.success) {
-                    // Map and exclude unwanted fields
                     const transformedColumns = data.data.map((column: BackEndColumnData) => ({
                         id: column._id,             // Rename _id to id
                         title: column.columnName,   // Rename columnName to title
+                        position: column.position,
                     }));
 
                     setColumns(transformedColumns);
@@ -90,7 +90,6 @@ function MineTask() {
                                             <ColumnContainer
                                                 key={column.id}
                                                 column={column}
-                                                updateColumn={updateColumn}
                                                 createTask={createTask}
                                                 tasks={tasks.filter((task) => task.columnID === column.id)}
                                                 deleteTask={deleteTask}
@@ -101,21 +100,21 @@ function MineTask() {
                                 </div>
                                 <ModalPopUp name="Add another list" useFor="addColumn" />
                             </div>
-                            {createPortal(<DragOverlay>
-                                {activeColumn && (
-                                    <ColumnContainer
-                                        column={activeColumn}
-                                        updateColumn={updateColumn}
-                                        createTask={createTask}
-                                        tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
-                                        deleteTask={deleteTask}
-                                        updateTask={updateTask}
-                                    />
-                                )}
-                                {activeTask &&
-                                    <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
-                                }
-                            </DragOverlay>,
+                            {createPortal(
+                                <DragOverlay>
+                                    {activeColumn && (
+                                        <ColumnContainer
+                                            column={activeColumn}
+                                            createTask={createTask}
+                                            tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
+                                            deleteTask={deleteTask}
+                                            updateTask={updateTask}
+                                        />
+                                    )}
+                                    {activeTask &&
+                                        <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
+                                    }
+                                </DragOverlay>,
                                 document.body
                             )}
                         </DndContext>
@@ -152,18 +151,10 @@ function MineTask() {
         setTasks(newTask)
 
     }
-    function updateColumn(id: ID, title: string) {
-        const newColumns = columns.map((col) => {
-            if (col.id !== id) return col;
-            return { ...col, title }
-        });
-        setColumns(newColumns)
-
-    }
 
 
     function onDragStartFNC(e: DragStartEvent) {
-        console.log("Dragging is happening", e)
+        // console.log("Dragging is happening", e)
         if (e.active.data.current?.type === "Column") {
             setActiveColumn(e.active.data.current.column);
             return
@@ -181,14 +172,21 @@ function MineTask() {
 
         const activeColumnID = active.id;
         const overColumnID = over.id;
-
         if (activeColumnID === overColumnID) return;
+        const reOderColumns = async () => {
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuth}/column/reorder/${activeColumnID}/${overColumnID}`, {
+                method: "PATCH",
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            if (!res.ok) {
+                throw new Error("reordering failed")
+            }
+        }
+        reOderColumns()
+        useColumnStore.getState().moveColumn(activeColumnID, overColumnID);
 
-        setColumns(columns => {
-            const activeColumnIndex = columns.findIndex((col) => col.id === activeColumnID)
-            const overColumnIndex = columns.findIndex((col) => col.id === overColumnID)
-            return arrayMove(columns, activeColumnIndex, overColumnIndex)
-        })
     }
     function onDrageOverFNC(e: DragOverEvent) {
         const { active, over } = e;
