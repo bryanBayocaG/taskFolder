@@ -34,6 +34,7 @@ export default function Navbar() {
 
     } catch (error) {
       console.error("Sign-out failed:", error);
+      throw new Error("Sign-out failed")
     }
   }
   return (

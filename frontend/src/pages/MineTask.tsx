@@ -1,26 +1,30 @@
 import ColumnContainer from "@/components/ColumnContainer";
-import { BackEndColumnData, Column, ID, Task } from "@/type";
+import { BackEndColumnData, BackEndTaskData, Column, ID, Task } from "@/type";
 import { useEffect, useMemo, useState } from "react";
 import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent } from "@dnd-kit/core"
-import { arrayMove, SortableContext } from '@dnd-kit/sortable';
+import { SortableContext } from '@dnd-kit/sortable';
 import { createPortal } from "react-dom";
 import TaskContainer from "@/components/TaskContainer";
-import { useAuthStore, useColumnStore } from "@/store";
+import { useAuthStore, useColumnStore, useTaskStore } from "@/store";
 import FobiddenPage from "@/pages/FobiddenPage";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import { Spinner } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";
-import { useParams } from "react-router-dom";
 
 function MineTask() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
-    const { uid } = useParams();
+
     const columns = useColumnStore((state) => state.columns)
     const setColumns = useColumnStore((state) => state.setColumns);
+
+    const tasks = useTaskStore((state) => state.tasks)
+    const setTasks = useTaskStore((state) => state.setTasks);
+
     const [isLoading, setLoading] = useState(false);
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
-    const [tasks, setTasks] = useState<Task[]>([])
+
+    // const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [activeTask, setActiveTask] = useState<Task | null>(null);
     const sensors = useSensors(
@@ -34,7 +38,7 @@ function MineTask() {
         const fetchColumns = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`${backEndBaseURL}/api/user/${uid}/column`, {
+                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -65,8 +69,43 @@ function MineTask() {
                 setLoading(false);
             }
         }
+
+        const fetchTasks = async () => {
+            try {
+                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/task`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+                if (!res.ok) {
+                    throw new Error('Failed to fetch columns');
+                }
+                const data = await res.json()
+
+                if (data.success) {
+                    const transformedTasks = data.data.map((task: BackEndTaskData) => ({
+                        id: task._id,
+                        columnID: task.columnID,
+                        content: task.content,
+                    }));
+
+                    setTasks(transformedTasks);
+                } else {
+                    localStorage.removeItem("task-store");
+                    throw new Error('No data foundZZ');
+                }
+
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message)
+                }
+            }
+        }
         fetchColumns();
-    }, [currentAuthUID, setColumns, uid])
+        fetchTasks();
+
+    }, [currentAuthUID, setColumns, setTasks])
 
     return (
         <>
@@ -153,9 +192,7 @@ function MineTask() {
 
     }
 
-
     function onDragStartFNC(e: DragStartEvent) {
-        // console.log("Dragging is happening", e)
         if (e.active.data.current?.type === "Column") {
             setActiveColumn(e.active.data.current.column);
             return
@@ -202,28 +239,9 @@ function MineTask() {
 
         if (!isActiveTask) return;
 
-        //dropping task over other task
-        if (isActiveTask && isOverTask) {
-            setTasks((tasks) => {
-                const activeIndex = tasks.findIndex(t => t.id === activeTaskID)
-                const overIndex = tasks.findIndex(t => t.id === overTaskID)
-                tasks[activeIndex].columnID = tasks[overIndex].columnID;
-                return arrayMove(tasks, activeIndex, overIndex)
-            })
-        }
-
         const isOverColumn = over.data.current?.type === "Column"
-        //dropping task over other column
-        if (isActiveTask && isOverColumn) {
-            setTasks((tasks) => {
-                const activeIndex = tasks.findIndex(t => t.id === activeTaskID)
-                tasks[activeIndex].columnID = overTaskID;
-                return arrayMove(tasks, activeIndex, activeIndex)
-            })
-        }
-
+        useTaskStore.getState().moveTask(activeTaskID, overTaskID, isActiveTask, isOverTask, isOverColumn);
     }
-
 }
 
 

@@ -18,3 +18,10 @@ export type BackEndColumnData = {
   position: number;
   createdBy: string;
 };
+
+export type BackEndTaskData = {
+  _id: ID;
+  columnID: string;
+  createdBy: string;
+  content: string;
+};

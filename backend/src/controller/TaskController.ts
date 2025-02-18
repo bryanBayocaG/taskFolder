@@ -42,7 +42,7 @@ export const addTask = async (req: Request, res: Response) => {
       _id: columnID,
     });
     if (!findValidColumn) {
-      return res.status(400).json({ meseage: "accessing invalid column" });
+      return res.status(403).json({ meseage: "accessing invalid column" });
     }
     const duplicateTask = await Task.findOne({ content });
     if (duplicateTask) {
@@ -55,7 +55,7 @@ export const addTask = async (req: Request, res: Response) => {
     });
     await newTask.save();
 
-    res.json(200).json({
+    res.status(200).json({
       success: true,
       message: "task added succesfully",
       data: newTask,

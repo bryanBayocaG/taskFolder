@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { Column, ID } from "./type";
+import { Column, ID, Task } from "./type";
 import { arrayMove } from "@dnd-kit/sortable";
 
 type AuthStore = {
@@ -31,6 +31,19 @@ type ColumnStore = {
   deleteColumn: (id: ID) => void;
   moveColumn: (activeColumnID: ID, overColumnID: ID) => void;
   clearColumns: () => void;
+};
+
+type TaskStore = {
+  tasks: Task[];
+  setTasks: (tasks: Task[]) => void;
+  addTask: (task: Task) => void;
+  moveTask: (
+    activeTaskID: ID,
+    overTaskID: ID,
+    isActiveTask: boolean,
+    isOverTask: boolean,
+    isOverColumn: boolean
+  ) => void;
 };
 
 export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
@@ -126,6 +139,54 @@ export const useColumnStore = create<
     }),
     {
       name: "column-store",
+    }
+  )
+);
+
+export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
+  persist(
+    (set) => ({
+      tasks: [],
+      setTasks: (newTasks) => set({ tasks: newTasks }),
+      addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
+
+      moveTask: (
+        activeTaskID,
+        overTaskID,
+        isActiveTask,
+        isOverTask,
+        isOverColumn
+      ) =>
+        set((state) => {
+          const activeIndex = state.tasks.findIndex(
+            (t) => t.id === activeTaskID
+          );
+          if (activeIndex === -1) return {};
+
+          // Dropping task over another task
+          if (isActiveTask && isOverTask) {
+            const overIndex = state.tasks.findIndex((t) => t.id === overTaskID);
+            if (overIndex === -1) return {};
+
+            state.tasks[activeIndex].columnID = state.tasks[overIndex].columnID;
+            return {
+              tasks: arrayMove(state.tasks, activeIndex, overIndex),
+            };
+          }
+
+          // Dropping task into a column
+          if (isActiveTask && isOverColumn) {
+            state.tasks[activeIndex].columnID = overTaskID;
+            return {
+              tasks: [...state.tasks],
+            };
+          }
+
+          return {};
+        }),
+    }),
+    {
+      name: "task-store",
     }
   )
 );

@@ -1,5 +1,4 @@
 import { useAuthStore } from '@/store'
-import React from 'react'
 
 function NotFoundPage() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
