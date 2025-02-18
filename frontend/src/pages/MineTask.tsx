@@ -6,7 +6,7 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable';
 import { createPortal } from "react-dom";
 import TaskContainer from "@/components/TaskContainer";
 import { useAuthStore, useColumnStore } from "@/store";
-import FobiddenPage from "@/components/FobiddenPage";
+import FobiddenPage from "@/pages/FobiddenPage";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import { Spinner } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";

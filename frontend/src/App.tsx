@@ -8,6 +8,7 @@ import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import AuthRoute from "./components/AuthRoute";
+import NotFoundPage from "./pages/NotFoundPage";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
             <Route path="/about" element={<About />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
             <Route path="/services" element={<Services />}></Route>
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
           <Footer />
         </div>
