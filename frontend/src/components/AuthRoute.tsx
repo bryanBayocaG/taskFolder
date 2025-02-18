@@ -7,8 +7,8 @@ interface AuthRouteProps {
 
 const AuthRoute = ({ element }: AuthRouteProps) => {
     const currentAuth = useAuthStore((state) => state.currentAuth);
-
-    return currentAuth ? <Navigate to="/mytask" replace /> : element;
+    const currentAuthUID = useAuthStore((state) => state.currentAuthId)
+    return currentAuth ? <Navigate to={`/mytask/${currentAuthUID}`} replace /> : element;
 };
 
 export default AuthRoute;

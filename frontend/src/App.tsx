@@ -19,7 +19,7 @@ function App() {
           <Alert />
           <Routes>
             <Route path="/" element={<AuthRoute element={<Home />} />} />
-            <Route path="/mytask" element={<MineTask />}></Route>
+            <Route path="/mytask/:uid" element={<MineTask />}></Route>
             <Route path="/about" element={<About />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
             <Route path="/services" element={<Services />}></Route>

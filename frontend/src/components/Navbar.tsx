@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { ModeToggle } from "./mode-toggle"
 import { DropdownProfile } from "./DropdownProfile"
-import { useAuthStore } from "@/store"
+import { useAuthStore, useColumnStore } from "@/store"
 import AvatarProf from "./AvatarProf"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
@@ -17,16 +17,20 @@ export default function Navbar() {
   const userImg = useAuthStore((state) => state.currentAuthImg)
   const userEmail = useAuthStore((state) => state.currentAuthEmail)
   const userName = useAuthStore((state) => state.currentAuthDisplayName)
+
   const currentOff = useAuthStore((state) => state.currentOff)
   const navigate = useNavigate();
   const HandleSignOut = async () => {
     try {
       await signOut(auth).then(() => {
+        currentOff()
+        useColumnStore.getState().clearColumns();
+        localStorage.removeItem("column-store");
         navigate("/");
       }).then(() => {
         toast.success("Signed out successfully");
       });
-      currentOff()
+
     } catch (error) {
       console.error("Sign-out failed:", error);
     }

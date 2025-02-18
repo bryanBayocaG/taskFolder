@@ -10,6 +10,7 @@ import { CiCirclePlus } from "react-icons/ci";
 import { useState } from "react";
 import { useAuthStore, useColumnStore } from "@/store";
 import { backEndBaseURL } from "@/utils/baseUrl";
+import { Column } from "@/type";
 
 interface Props {
     name: string;
@@ -38,9 +39,10 @@ export default function ModalPopUp({ name, useFor }: Props) {
                 throw new Error("a problem with adding a column happened")
             }
             const data = await res.json();
-            const formattedData = {
+            const formattedData: Column = {
                 id: data.data._id,   //rename _id to id
                 title: data.data.columnName,  //rename columnName to title
+                position: data.data.position,
             };
 
             addColumn(formattedData)

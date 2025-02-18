@@ -10,14 +10,15 @@ import FobiddenPage from "@/components/FobiddenPage";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import { Spinner } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";
+import { useParams } from "react-router-dom";
 
 function MineTask() {
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
+    const { uid } = useParams();
     const columns = useColumnStore((state) => state.columns)
     const setColumns = useColumnStore((state) => state.setColumns);
     const [isLoading, setLoading] = useState(false);
-
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
     const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -29,12 +30,11 @@ function MineTask() {
             }
         })
     )
-
     useEffect(() => {
         const fetchColumns = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column`, {
+                const res = await fetch(`${backEndBaseURL}/api/user/${uid}/column`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -54,18 +54,19 @@ function MineTask() {
 
                     setColumns(transformedColumns);
                 } else {
-                    throw new Error('No data found');
+                    localStorage.removeItem("column-store");
+                    throw new Error('No data foundZZ');
                 }
             } catch (error) {
                 if (error instanceof Error) {
-                    console.log(error.message)
+                    throw new Error(error.message)
                 }
             } finally {
                 setLoading(false);
             }
         }
         fetchColumns();
-    }, [currentAuthUID])
+    }, [currentAuthUID, setColumns, uid])
 
     return (
         <>

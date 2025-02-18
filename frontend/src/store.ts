@@ -30,6 +30,7 @@ type ColumnStore = {
   updateColumn: (id: ID, title: string) => void;
   deleteColumn: (id: ID) => void;
   moveColumn: (activeColumnID: ID, overColumnID: ID) => void;
+  clearColumns: () => void;
 };
 
 export const useAuthStore = create<AuthStore, [["zustand/persist", AuthStore]]>(
@@ -121,6 +122,7 @@ export const useColumnStore = create<
             columns: arrayMove(state.columns, activeIndex, overIndex),
           };
         }),
+      clearColumns: () => set({ columns: [] }),
     }),
     {
       name: "column-store",

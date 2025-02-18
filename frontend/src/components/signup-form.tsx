@@ -18,6 +18,7 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"form">) {
 
   const currentOn = useAuthStore((state) => state.currentOn)
+  const currentAuthUID = useAuthStore((state) => state.currentAuthId)
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -107,7 +108,8 @@ export function LoginForm({
         toast.info("Email is used. Please proceed to Log in");
         return;
       }
-      navigate("/mytask");
+
+      navigate(`/mytask/${currentAuthUID}`);
       toast.success("Login successfully");
       currentOn(user.uid, user.photoURL, user.email, user.displayName);
     } else {
