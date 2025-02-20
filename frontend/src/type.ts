@@ -1,5 +1,12 @@
 export type ID = string | number;
 
+export type Board = {
+  id: ID;
+  boardName: string;
+  description: string;
+  boardImg: string;
+};
+
 export type Column = {
   id: ID;
   title: string;
@@ -24,4 +31,11 @@ export type BackEndTaskData = {
   columnID: string;
   createdBy: string;
   content: string;
+};
+
+export type BackEndBoardData = {
+  _id: ID;
+  boardName: string;
+  description: string;
+  boardImg: string;
 };
