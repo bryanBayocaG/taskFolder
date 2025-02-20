@@ -57,11 +57,18 @@ export const getBoard = async (req: Request, res: Response) => {
 };
 export const deleteBoard = async (req: Request, res: Response) => {
   try {
-    const { uid } = req.params;
+    const { uid, id } = req.params;
     const user = await User.findOne({ uid });
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
+    const result = await Board.deleteOne({ _id: id });
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "board not found or not deleted" });
+    }
+    return res.status(200).json({ message: "board deleted successfully" });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
@@ -70,11 +77,24 @@ export const deleteBoard = async (req: Request, res: Response) => {
 };
 export const updateBoard = async (req: Request, res: Response) => {
   try {
-    const { uid } = req.params;
+    const { uid, id } = req.params;
+    const updates = req.body;
     const user = await User.findOne({ uid });
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
+    const updatedColumn = await Board.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedColumn) {
+      return res.status(404).json({ message: "board not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "board updated successfully", data: updatedColumn });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });
