@@ -9,12 +9,23 @@ import {
   updateColumn,
 } from "../controller/ColumnController";
 import { addTask, getTask } from "../controller/TaskController";
+import {
+  addBoard,
+  deleteBoard,
+  getBoard,
+  updateBoard,
+} from "../controller/BoardController";
 
 const router = express.Router();
 
 router.post("/user", createUser);
 
 router.post("/user/login/:uid", logInUser);
+
+router.post("/user/:uid/board", addBoard);
+router.get("/user/:uid/board", getBoard);
+router.delete("/user/:uid/board/:id", deleteBoard);
+router.patch("/user/:uid/board/:id", updateBoard);
 
 router.post("/user/:uid/column", addColumn);
 router.get("/user/:uid/column", getColumns);

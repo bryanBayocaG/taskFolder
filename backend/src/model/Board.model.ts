@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const boardSchema = new mongoose.Schema(
   {
-    boardName: { type: String, required: true },
+    boardName: { type: String, required: true, unique: true },
     description: { type: String, required: true },
-    boardImg: { type: String },
+    boardImg: { type: String, default: null },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -15,5 +15,5 @@ const boardSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Column = mongoose.model("Board", boardSchema);
-export default Column;
+const Board = mongoose.model("Board", boardSchema);
+export default Board;
