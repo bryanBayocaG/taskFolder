@@ -211,22 +211,25 @@ function MineTask() {
         const activeColumnID = active.id;
         const overColumnID = over.id;
         if (activeColumnID === overColumnID) return;
-        const reOderColumns = async () => {
-            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuth}/column/reorder/${activeColumnID}/${overColumnID}`, {
-                method: "PATCH",
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            if (!res.ok) {
-                throw new Error("reordering failed")
-            }
-        }
-        reOderColumns()
+        // const reOderColumns = async () => {
+        //     const res = await fetch(`${backEndBaseURL}/api/user/${currentAuth}/column/reorder/${activeColumnID}/${overColumnID}`, {
+        //         method: "PATCH",
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         }
+        //     })
+        //     if (!res.ok) {
+        //         throw new Error("reordering failed")
+        //     }
+        // }
+        // reOderColumns()
         useColumnStore.getState().moveColumn(activeColumnID, overColumnID);
 
     }
+
+
     function onDrageOverFNC(e: DragOverEvent) {
+
         const { active, over } = e;
         if (!over) return;
 

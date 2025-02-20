@@ -18,7 +18,6 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"form">) {
 
   const currentOn = useAuthStore((state) => state.currentOn)
-  const currentAuthUID = useAuthStore((state) => state.currentAuthId)
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -109,7 +108,7 @@ export function LoginForm({
         return;
       }
 
-      navigate(`/mytask/${currentAuthUID}`);
+      navigate("/myboard");
       toast.success("Login successfully");
       currentOn(user.uid, user.photoURL, user.email, user.displayName);
     } else {

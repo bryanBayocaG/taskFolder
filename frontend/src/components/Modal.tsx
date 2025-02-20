@@ -14,7 +14,7 @@ import { Column } from "@/type";
 
 interface Props {
     name: string;
-    useFor: "addColumn" | "addTask";
+    useFor: "addColumn" | "addTask" | "addBoard";
 }
 
 export default function ModalPopUp({ name, useFor }: Props) {
@@ -23,7 +23,7 @@ export default function ModalPopUp({ name, useFor }: Props) {
     const addColumn = useColumnStore((state) => state.addColumn);
     const [colName, setColName] = useState("")
 
-    const handSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const addColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
             const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column`, {
@@ -66,9 +66,8 @@ export default function ModalPopUp({ name, useFor }: Props) {
                         <>
                             <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
                             <ModalBody>
-                                {useFor === "addColumn" ?
-
-                                    <form onSubmit={handSubmit}>
+                                {useFor === "addColumn" ? (
+                                    <form onSubmit={addColumnSubmit}>
                                         <input type="text"
                                             value={colName}
                                             onChange={e => setColName(e.target.value)}
@@ -77,9 +76,12 @@ export default function ModalPopUp({ name, useFor }: Props) {
                                             Submit
                                         </Button>
                                     </form>
+                                ) : useFor === "addTask" ? (
+                                    <p>addTask</p>
+                                ) : (
+                                    <p>addBoard</p>
+                                )
 
-                                    :
-                                    <p>add task</p>
                                 }
                             </ModalBody>
                         </>

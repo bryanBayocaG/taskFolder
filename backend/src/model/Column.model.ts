@@ -9,7 +9,6 @@ const columnSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    // tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   },
   { timestamps: true }
 );

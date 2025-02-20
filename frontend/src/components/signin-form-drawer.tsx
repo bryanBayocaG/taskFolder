@@ -27,7 +27,6 @@ interface Props {
 export default function SignInFormDrawer({ variant, size, className }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const currentOn = useAuthStore((state) => state.currentOn)
-    const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -103,7 +102,7 @@ export default function SignInFormDrawer({ variant, size, className }: Props) {
                 toast.info("Email not match. Please proceed to Sign up");
                 return;
             }
-            navigate(`/mytask/${currentAuthUID}`);
+            navigate("/myboard");
             toast.success("Login successfully");
             currentOn(user.uid, user.photoURL, user.email, user.displayName);
         } else {

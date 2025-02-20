@@ -9,6 +9,7 @@ import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
 import AuthRoute from "./components/AuthRoute";
 import NotFoundPage from "./pages/NotFoundPage";
+import Myboards from "./pages/Myboards";
 
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
           <Alert />
           <Routes>
             <Route path="/" element={<AuthRoute element={<Home />} />} />
-            <Route path="/mytask/:uid" element={<MineTask />}></Route>
+            <Route path="/myboard" element={<Myboards />}></Route>
+            <Route path="/mytask/:id" element={<MineTask />}></Route>
             <Route path="/about" element={<About />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
             <Route path="/services" element={<Services />}></Route>
