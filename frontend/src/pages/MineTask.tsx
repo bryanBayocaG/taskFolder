@@ -10,8 +10,10 @@ import FobiddenPage from "@/pages/FobiddenPage";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import { Spinner } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";
+import { useParams } from "react-router-dom";
 
 function MineTask() {
+    const { id, name } = useParams();
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
 
@@ -38,7 +40,7 @@ function MineTask() {
         const fetchColumns = async () => {
             try {
                 setLoading(true);
-                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column`, {
+                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -117,47 +119,56 @@ function MineTask() {
                         </div>
                         :
 
-                        <DndContext
-                            onDragStart={onDragStartFNC}
-                            onDragEnd={onDragEndFNC}
-                            sensors={sensors}
-                            onDragOver={onDrageOverFNC}
-                        >
-                            <div className="m-auto flex h-full w-full items-center overflow-x-auto overflow-y-hidden px-2">
-                                <div className="flex gap-5 mr-5">
-                                    <SortableContext items={columnsID}>
-                                        {columns.map((column) => (
+                        <>
+                            <div className="h-[120px]"></div>
+                            <div className="mx-10">
+                                <p className="font-bold text-4xl">
+
+                                    {name}
+                                </p>
+                            </div>
+                            <DndContext
+                                onDragStart={onDragStartFNC}
+                                onDragEnd={onDragEndFNC}
+                                sensors={sensors}
+                                onDragOver={onDrageOverFNC}
+                            >
+                                <div className="m-auto flex h-fit w-full items-center overflow-x-auto overflow-y-hidden p-10">
+                                    <div className="flex gap-5 mr-5">
+                                        <SortableContext items={columnsID}>
+                                            {columns.map((column) => (
+                                                <ColumnContainer
+                                                    key={column.id}
+                                                    column={column}
+                                                    createTask={createTask}
+                                                    tasks={tasks.filter((task) => task.columnID === column.id)}
+                                                    deleteTask={deleteTask}
+                                                    updateTask={updateTask}
+                                                />
+                                            ))}
+                                        </SortableContext>
+                                    </div>
+                                    <ModalPopUp name="Add another list" useFor="addColumn" refID={id} />
+                                </div>
+                                {createPortal(
+                                    <DragOverlay>
+                                        {activeColumn && (
                                             <ColumnContainer
-                                                key={column.id}
-                                                column={column}
+                                                column={activeColumn}
                                                 createTask={createTask}
-                                                tasks={tasks.filter((task) => task.columnID === column.id)}
+                                                tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
                                                 deleteTask={deleteTask}
                                                 updateTask={updateTask}
                                             />
-                                        ))}
-                                    </SortableContext>
-                                </div>
-                                <ModalPopUp name="Add another list" useFor="addColumn" />
-                            </div>
-                            {createPortal(
-                                <DragOverlay>
-                                    {activeColumn && (
-                                        <ColumnContainer
-                                            column={activeColumn}
-                                            createTask={createTask}
-                                            tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
-                                            deleteTask={deleteTask}
-                                            updateTask={updateTask}
-                                        />
-                                    )}
-                                    {activeTask &&
-                                        <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
-                                    }
-                                </DragOverlay>,
-                                document.body
-                            )}
-                        </DndContext>
+                                        )}
+                                        {activeTask &&
+                                            <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
+                                        }
+                                    </DragOverlay>,
+                                    document.body
+                                )}
+                            </DndContext>
+                        </>
                     }
                 </>
                 :

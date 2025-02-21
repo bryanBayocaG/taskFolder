@@ -4,7 +4,7 @@ import User from "../model/User.model";
 
 export const addColumn = async (req: Request, res: Response) => {
   try {
-    const uid = req.params.uid;
+    const { uid, id } = req.params;
     const { columnName } = req.body;
     if (!columnName) {
       return res.status(400).json({ message: "column name invalid" });
@@ -24,6 +24,7 @@ export const addColumn = async (req: Request, res: Response) => {
     const newColumn = new Column({
       columnName,
       createdBy: user._id,
+      boardFrom: id,
       position: columnCount,
     });
     await newColumn.save();
@@ -41,7 +42,7 @@ export const addColumn = async (req: Request, res: Response) => {
 
 export const getColumns = async (req: Request, res: Response) => {
   try {
-    const { uid } = req.params;
+    const { uid, id } = req.params;
     const user = await User.findOne({ uid });
     if (!user) {
       return res.status(404).json({ message: "user not found" });

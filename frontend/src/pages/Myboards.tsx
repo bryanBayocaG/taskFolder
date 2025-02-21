@@ -23,7 +23,6 @@ function Myboards() {
                     }
                 })
                 if (!res.ok) {
-                    console.log(res.status)
                     throw new Error("fetching boards failed")
                 }
                 const data = await res.json()

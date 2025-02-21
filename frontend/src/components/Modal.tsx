@@ -15,9 +15,10 @@ import { Column } from "@/type";
 interface Props {
     name: string;
     useFor: "addColumn" | "addTask" | "addBoard";
+    refID?: string;
 }
 
-export default function ModalPopUp({ name, useFor }: Props) {
+export default function ModalPopUp({ name, useFor, refID }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const addColumn = useColumnStore((state) => state.addColumn);
@@ -26,7 +27,7 @@ export default function ModalPopUp({ name, useFor }: Props) {
     const addColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
-            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column`, {
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column/${refID}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

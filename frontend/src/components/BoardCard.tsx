@@ -13,7 +13,7 @@ const defaultIMG = "https://media.istockphoto.com/id/1428668891/vector/escape-fr
 const BoardCard = ({ name, desc, id, img }: Props) => {
     const navigate = useNavigate();
     const handleClik = (id: ID) => {
-        navigate(`/mytask/${id}`)
+        navigate(`/mytask/${name}/${id}`)
     }
 
     return (

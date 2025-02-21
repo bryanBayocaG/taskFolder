@@ -14,7 +14,6 @@ import SignInFormDrawer from "./signin-form-drawer"
 
 export default function Navbar() {
   const currentAuth = useAuthStore((state) => state.currentAuth)
-  const currentUID = useAuthStore((state) => state.currentAuthId)
   const userImg = useAuthStore((state) => state.currentAuthImg)
   const userEmail = useAuthStore((state) => state.currentAuthEmail)
   const userName = useAuthStore((state) => state.currentAuthDisplayName)
@@ -38,7 +37,7 @@ export default function Navbar() {
     }
   }
   return (
-    <header className="absolute w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-3 z-[15]">
+    <header className="absolute w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-3 z-[15] top-0">
       <div className="container mx-auto flex h-fit max-w-6xl items-center justify-between px-4 md:px-6">
         <a href={currentAuth ? `/myboard` : "/"} className="flex items-center gap-2" >
           <div className="h-10 w-10 md:h-20 md:w-20 ">

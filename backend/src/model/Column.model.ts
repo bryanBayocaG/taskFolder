@@ -9,6 +9,11 @@ const columnSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    boardFrom: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Board",
+      required: true,
+    },
   },
   { timestamps: true }
 );

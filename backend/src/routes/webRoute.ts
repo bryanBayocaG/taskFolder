@@ -27,8 +27,8 @@ router.get("/user/:uid/board", getBoard);
 router.delete("/user/:uid/board/:id", deleteBoard);
 router.patch("/user/:uid/board/:id", updateBoard);
 
-router.post("/user/:uid/column", addColumn);
-router.get("/user/:uid/column", getColumns);
+router.post("/user/:uid/column/:id", addColumn);
+router.get("/user/:uid/column/:id", getColumns);
 router.delete("/user/:uid/column/:id", deleteColumns);
 router.patch("/user/:uid/column/:id", updateColumn);
 router.patch("/user/:uid/column/reorder/:activeID/:overID", reorderColumns);

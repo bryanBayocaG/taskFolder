@@ -22,7 +22,7 @@ function App() {
           <Routes>
             <Route path="/" element={<AuthRoute element={<Home />} />} />
             <Route path="/myboard" element={<Myboards />}></Route>
-            <Route path="/mytask/:id" element={<MineTask />}></Route>
+            <Route path="/mytask/:name/:id" element={<MineTask />}></Route>
             <Route path="/about" element={<About />}></Route>
             <Route path="/contact" element={<Contact />}></Route>
             <Route path="/services" element={<Services />}></Route>
