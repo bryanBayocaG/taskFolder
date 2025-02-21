@@ -14,6 +14,7 @@ import { signOut } from "firebase/auth";
 import { toast } from "react-toastify";
 import AvatarProf from "./AvatarProf";
 import { useNavigate } from "react-router-dom";
+import localStorageClear from "@/LocalStorageClear";
 
 
 export function DropdownProfile() {
@@ -30,6 +31,7 @@ export function DropdownProfile() {
                 toast.success("Signed out successfully");
             });
             currentOff()
+            localStorageClear();
         } catch (error) {
             console.error("Sign-out failed:", error);
         }

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Column from "../model/Column.model";
 import User from "../model/User.model";
+import Board from "../model/Board.model";
 
 type ColumnType = {
   id: number | string;
@@ -19,10 +20,14 @@ export const addColumn = async (req: Request, res: Response) => {
     if (columnExist) {
       return res.status(400).json({ message: "column name already exist" });
     }
+    const boardExist = await Board.findOne({ _id: id });
+    if (!boardExist) {
+      return res.status(404).json({ message: "board not found" });
+    }
 
     const user = await User.findOne({ uid });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "user not found" });
     }
 
     const columnCount = await Column.countDocuments({ createdBy: user._id });

@@ -104,7 +104,6 @@ function MineTask() {
                             <Spinner size="lg" color="primary" />
                         </div>
                         :
-
                         <>
                             <div className="h-[90px] md:h-[120px]"></div>
                             <div className="mx-10">

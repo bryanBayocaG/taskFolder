@@ -4,33 +4,32 @@ import { Input } from "@/components/ui/input"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { ModeToggle } from "./mode-toggle"
 import { DropdownProfile } from "./DropdownProfile"
-import { useAuthStore, useColumnStore } from "@/store"
+import { useAuthStore } from "@/store"
 import AvatarProf from "./AvatarProf"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { toast } from "react-toastify"
 import { useNavigate } from "react-router-dom"
 import SignInFormDrawer from "./signin-form-drawer"
+import localStorageClear from "@/LocalStorageClear"
 
 export default function Navbar() {
   const currentAuth = useAuthStore((state) => state.currentAuth)
   const userImg = useAuthStore((state) => state.currentAuthImg)
   const userEmail = useAuthStore((state) => state.currentAuthEmail)
   const userName = useAuthStore((state) => state.currentAuthDisplayName)
-
   const currentOff = useAuthStore((state) => state.currentOff)
   const navigate = useNavigate();
   const HandleSignOut = async () => {
     try {
       await signOut(auth).then(() => {
-        currentOff()
-        useColumnStore.getState().clearColumns();
-        localStorage.removeItem("column-store");
+        localStorageClear()
         navigate("/");
       }).then(() => {
         toast.success("Signed out successfully");
       });
-
+      currentOff()
+      localStorageClear();
     } catch (error) {
       console.error("Sign-out failed:", error);
       throw new Error("Sign-out failed")
