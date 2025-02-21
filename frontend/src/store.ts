@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Column, ID, Task } from "./type";
 import { arrayMove } from "@dnd-kit/sortable";
+import { backEndBaseURL } from "./utils/baseUrl";
 
 type AuthStore = {
   currentAuth: boolean;
@@ -120,7 +121,7 @@ export const useColumnStore = create<
           columns: state.columns.filter((col) => col.id !== id),
         })),
 
-      moveColumn: (activeColumnID, overColumnID) =>
+      moveColumn: async (activeColumnID, overColumnID) => {
         set((state) => {
           const activeIndex = state.columns.findIndex(
             (col) => col.id === activeColumnID
@@ -131,10 +132,37 @@ export const useColumnStore = create<
 
           if (activeIndex === -1 || overIndex === -1) return state; // Prevent errors
 
-          return {
-            columns: arrayMove(state.columns, activeIndex, overIndex),
+          //past this point
+          // return {
+          //   columns: arrayMove(state.columns, activeIndex, overIndex),
+          // };
+
+          const updatedColumns = arrayMove(
+            state.columns,
+            activeIndex,
+            overIndex
+          ).map((col, index) => ({ ...col, position: index }));
+          //wala kinalaman ang map, ing change ko lang value ng position
+
+          const reOderColumns = async () => {
+            const res = await fetch(`${backEndBaseURL}/api/column/reorder`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                columns: updatedColumns,
+              }),
+            });
+            if (!res.ok) {
+              console.log("request to move not happen");
+              return state;
+            }
           };
-        }),
+          reOderColumns();
+          return { columns: updatedColumns };
+        });
+      },
       clearColumns: () => set({ columns: [] }),
     }),
     {

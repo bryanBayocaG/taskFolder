@@ -50,19 +50,12 @@ function MineTask() {
                     throw new Error('Failed to fetch columns');
                 }
                 const data = await res.json()
-
-                if (data.success) {
-                    const transformedColumns = data.data.map((column: BackEndColumnData) => ({
-                        id: column._id,             // Rename _id to id
-                        title: column.columnName,   // Rename columnName to title
-                        position: column.position,
-                    }));
-
-                    setColumns(transformedColumns);
-                } else {
-                    localStorage.removeItem("column-store");
-                    throw new Error('No data foundZZ');
-                }
+                const transformedColumns = data.data.map((column: BackEndColumnData) => ({
+                    id: column._id,
+                    title: column.columnName,
+                    position: column.position,
+                }));
+                setColumns(transformedColumns);
             } catch (error) {
                 if (error instanceof Error) {
                     throw new Error(error.message)
@@ -84,20 +77,13 @@ function MineTask() {
                     throw new Error('Failed to fetch columns');
                 }
                 const data = await res.json()
+                const transformedTasks = data.data.map((task: BackEndTaskData) => ({
+                    id: task._id,
+                    columnID: task.columnID,
+                    content: task.content,
+                }));
 
-                if (data.success) {
-                    const transformedTasks = data.data.map((task: BackEndTaskData) => ({
-                        id: task._id,
-                        columnID: task.columnID,
-                        content: task.content,
-                    }));
-
-                    setTasks(transformedTasks);
-                } else {
-                    localStorage.removeItem("task-store");
-                    throw new Error('No data foundZZ');
-                }
-
+                setTasks(transformedTasks);
             } catch (error) {
                 if (error instanceof Error) {
                     throw new Error(error.message)
@@ -120,11 +106,10 @@ function MineTask() {
                         :
 
                         <>
-                            <div className="h-[120px]"></div>
+                            <div className="h-[90px] md:h-[120px]"></div>
                             <div className="mx-10">
-                                <p className="font-bold text-4xl">
-
-                                    {name}
+                                <p className="font-bold text-xl md:text-3xl">
+                                    {name} - Board
                                 </p>
                             </div>
                             <DndContext

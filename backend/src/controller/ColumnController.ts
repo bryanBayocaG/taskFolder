@@ -2,6 +2,12 @@ import { Request, Response } from "express";
 import Column from "../model/Column.model";
 import User from "../model/User.model";
 
+type ColumnType = {
+  id: number | string;
+  title: string;
+  position: number;
+};
+
 export const addColumn = async (req: Request, res: Response) => {
   try {
     const { uid, id } = req.params;
@@ -47,7 +53,7 @@ export const getColumns = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
-    const columns = await Column.find({ createdBy: user._id })
+    const columns = await Column.find({ boardFrom: id, createdBy: user._id })
       .select("-__v -createdAt -updatedAt")
       .sort({ position: 1 });
     if (columns.length === 0) {
@@ -127,6 +133,28 @@ export const reorderColumns = async (req: Request, res: Response) => {
     await activeCol.save();
     await overCol.save();
 
+    return res
+      .status(200)
+      .json({ success: true, message: "Columns reordered successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res
+        .status(500)
+        .json({ message: "Error updating columns", error: error.message });
+    }
+  }
+};
+export const reorderColumns2 = async (req: Request, res: Response) => {
+  try {
+    const { columns } = req.body;
+
+    const bulkOperations = columns.map((col: ColumnType, index: number) => ({
+      updateOne: {
+        filter: { _id: col.id },
+        update: { position: index },
+      },
+    }));
+    await Column.bulkWrite(bulkOperations);
     return res
       .status(200)
       .json({ success: true, message: "Columns reordered successfully" });

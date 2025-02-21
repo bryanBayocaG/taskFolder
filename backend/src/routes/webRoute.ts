@@ -5,7 +5,7 @@ import {
   addColumn,
   deleteColumns,
   getColumns,
-  reorderColumns,
+  reorderColumns2,
   updateColumn,
 } from "../controller/ColumnController";
 import { addTask, getTask } from "../controller/TaskController";
@@ -31,7 +31,8 @@ router.post("/user/:uid/column/:id", addColumn);
 router.get("/user/:uid/column/:id", getColumns);
 router.delete("/user/:uid/column/:id", deleteColumns);
 router.patch("/user/:uid/column/:id", updateColumn);
-router.patch("/user/:uid/column/reorder/:activeID/:overID", reorderColumns);
+// router.patch("/user/:uid/column/reorder/:activeID/:overID", reorderColumns);
+router.patch("/column/reorder/", reorderColumns2);
 
 router.get("/user/:uid/task", getTask);
 router.post("/user/:uid/task", addTask);
