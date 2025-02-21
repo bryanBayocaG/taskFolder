@@ -9,6 +9,7 @@ import { useMemo, useState } from "react";
 import TaskContainer from "./TaskContainer";
 import { useAuthStore, useColumnStore } from "@/store";
 import { backEndBaseURL } from "@/utils/baseUrl";
+import ModalPopUp from "./Modal";
 
 interface Props {
     column: Column;
@@ -156,6 +157,7 @@ function ColumnContainer(props: Props) {
             <Button color="primary" size={"sm"} variant="outline" onClick={() => { createTask(column.id) }}>
                 <CiCirclePlus /> Add tasks
             </Button>
+            <ModalPopUp name="Add Task2" useFor="addTask" refID={column.id} />
         </div>
     )
 }

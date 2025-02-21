@@ -93,8 +93,7 @@ function MineTask() {
         fetchColumns();
         fetchTasks();
 
-    }, [currentAuthUID, setColumns, setTasks])
-
+    }, [currentAuthUID, setColumns, setTasks, id])
     return (
         <>
             {currentAuth ?
@@ -117,7 +116,7 @@ function MineTask() {
                                 sensors={sensors}
                                 onDragOver={onDrageOverFNC}
                             >
-                                <div className="m-auto flex h-fit w-full items-center overflow-x-auto overflow-y-hidden p-10">
+                                <div className={`${columns.length === 0 ? "h-[75vh] dark:bg-[#020817]" : "h-fit"} m-auto flex w-full items-center overflow-x-auto overflow-y-hidden p-10`}>
                                     <div className="flex gap-5 mr-5">
                                         <SortableContext items={columnsID}>
                                             {columns.map((column) => (

@@ -18,7 +18,7 @@ export const addColumn = async (req: Request, res: Response) => {
     }
     const columnExist = await Column.findOne({ columnName });
     if (columnExist) {
-      return res.status(400).json({ message: "column name already exist" });
+      return res.status(409).json({ message: "column name already exist" });
     }
     const boardExist = await Board.findOne({ _id: id });
     if (!boardExist) {
