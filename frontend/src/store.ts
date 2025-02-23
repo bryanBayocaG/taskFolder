@@ -173,7 +173,7 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
       setTasks: (newTasks) => set({ tasks: newTasks }),
       addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
 
-      moveTask: (
+      moveTask: async (
         activeTaskID,
         overTaskID,
         isActiveTask,
@@ -237,6 +237,28 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
             }));
           }
 
+          const reOrderTask = async () => {
+            try {
+              const res = await fetch(`${backEndBaseURL}/api/task/reorder`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  tasks: updatedTasks,
+                }),
+              });
+              if (!res.ok) {
+                console.log("Request to reorder tasks failed");
+                return state;
+              }
+            } catch (error) {
+              if (error instanceof Error) {
+                throw new Error(error.message);
+              }
+            }
+          };
+          reOrderTask();
           return { tasks: updatedTasks };
         }),
     }),

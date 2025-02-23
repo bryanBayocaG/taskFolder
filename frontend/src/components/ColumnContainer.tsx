@@ -148,7 +148,7 @@ function ColumnContainer(props: Props) {
             <div className="flex flex-grow flex-col gap-4 p-3 overflow-x-hidden overflow-y-auto h-[400px] min-h-[400px]">
                 <SortableContext items={taskIDs}>
                     {tasks.map((task) => (
-                        <TaskContainer task={task} deleteTask={deleteTask} updateTask={updateTask} />
+                        <TaskContainer key={task.id} task={task} deleteTask={deleteTask} updateTask={updateTask} />
                     ))}
                 </SortableContext >
             </div>

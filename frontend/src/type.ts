@@ -17,6 +17,7 @@ export type Task = {
   id: ID;
   columnID: ID;
   content: string;
+  position: number;
 };
 
 export type BackEndColumnData = {
@@ -31,6 +32,7 @@ export type BackEndTaskData = {
   columnID: string;
   createdBy: string;
   content: string;
+  position: number;
 };
 
 export type BackEndBoardData = {

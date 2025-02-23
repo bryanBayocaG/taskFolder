@@ -122,35 +122,6 @@ export const updateColumn = async (req: Request, res: Response) => {
 
 export const reorderColumns = async (req: Request, res: Response) => {
   try {
-    const { activeID, overID } = req.params;
-
-    const activeCol = await Column.findById(activeID);
-    const overCol = await Column.findById(overID);
-
-    if (!activeCol || !overCol) {
-      return res.status(404).json({ message: "One or both columns not found" });
-    }
-
-    const tempPosition = activeCol.position;
-    activeCol.position = overCol.position;
-    overCol.position = tempPosition;
-
-    await activeCol.save();
-    await overCol.save();
-
-    return res
-      .status(200)
-      .json({ success: true, message: "Columns reordered successfully" });
-  } catch (error) {
-    if (error instanceof Error) {
-      return res
-        .status(500)
-        .json({ message: "Error updating columns", error: error.message });
-    }
-  }
-};
-export const reorderColumns2 = async (req: Request, res: Response) => {
-  try {
     const { columns } = req.body;
 
     const bulkOperations = columns.map((col: ColumnType, index: number) => ({

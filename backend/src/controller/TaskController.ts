@@ -3,6 +3,13 @@ import Column from "../model/Column.model";
 import Task from "../model/Task,model";
 import User from "../model/User.model";
 
+type TaskType = {
+  id: number | string;
+  content: string;
+  position: number;
+  columnID: string | number;
+};
+
 export const getTask = async (req: Request, res: Response) => {
   try {
     const { uid } = req.params;
@@ -94,6 +101,31 @@ export const deleteTask = async (req: Request, res: Response) => {
       return res
         .status(500)
         .json({ message: "error mo show mo", typeOfError: error.message });
+    }
+  }
+};
+
+export const reorderTask = async (req: Request, res: Response) => {
+  try {
+    const { tasks } = req.body;
+    console.log("reorderTas", tasks);
+    // const bulkOperations = tasks.map((task: TaskType, index: number) => ({
+    //   updateOne: {
+    //     filter: { _id: task.id },
+    //     update: { position: index, columnID: task.columnID }, // Ensure columnID updates
+    //   },
+    // }));
+
+    // await Task.bulkWrite(bulkOperations);
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Tasks reordered successfully" });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res
+        .status(500)
+        .json({ message: "Error updating tasks", error: error.message });
     }
   }
 };

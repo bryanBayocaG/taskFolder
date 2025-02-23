@@ -81,6 +81,7 @@ function MineTask() {
                     id: task._id,
                     columnID: task.columnID,
                     content: task.content,
+                    position: task.position
                 }));
 
                 setTasks(transformedTasks);
@@ -136,6 +137,7 @@ function MineTask() {
                                     <DragOverlay>
                                         {activeColumn && (
                                             <ColumnContainer
+                                                key={activeColumn.id}
                                                 column={activeColumn}
                                                 tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
                                                 deleteTask={deleteTask}
