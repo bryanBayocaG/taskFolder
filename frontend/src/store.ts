@@ -132,11 +132,6 @@ export const useColumnStore = create<
 
           if (activeIndex === -1 || overIndex === -1) return state; // Prevent errors
 
-          //past this point
-          // return {
-          //   columns: arrayMove(state.columns, activeIndex, overIndex),
-          // };
-
           const updatedColumns = arrayMove(
             state.columns,
             activeIndex,
@@ -178,89 +173,72 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
       setTasks: (newTasks) => set({ tasks: newTasks }),
       addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
 
-      // moveTask:  (
-      //   activeTaskID,
-      //   overTaskID,
-      //   isActiveTask,
-      //   isOverTask,
-      //   isOverColumn
-      // ) =>
-      //   set((state) => {
-      //     const activeIndex = state.tasks.findIndex(
-      //       (t) => t.id === activeTaskID
-      //     );
-      //     if (activeIndex === -1) return {};
-
-      //     // Dropping task over another task
-      //     if (isActiveTask && isOverTask) {
-      //       const overIndex = state.tasks.findIndex((t) => t.id === overTaskID);
-      //       if (overIndex === -1) return {};
-
-      //       state.tasks[activeIndex].columnID = state.tasks[overIndex].columnID;
-      //       return {
-      //         tasks: arrayMove(state.tasks, activeIndex, overIndex),
-      //       };
-      //     }
-
-      //     // Dropping task into a column
-      //     if (isActiveTask && isOverColumn) {
-      //       state.tasks[activeIndex].columnID = overTaskID;
-      //       return {
-      //         tasks: [...state.tasks],
-      //       };
-      //     }
-
-      //     return {};
-      //   }),
-
-      moveTask: async (
+      moveTask: (
         activeTaskID,
         overTaskID,
         isActiveTask,
         isOverTask,
         isOverColumn
-      ) => {
+      ) =>
         set((state) => {
+          // const activeIndex = state.tasks.findIndex(
+          //   (t) => t.id === activeTaskID
+          // );
+          // if (activeIndex === -1) return {};
+
+          // // Dropping task over another task
+          // if (isActiveTask && isOverTask) {
+          //   const overIndex = state.tasks.findIndex((t) => t.id === overTaskID);
+          //   if (overIndex === -1) return {};
+
+          //   state.tasks[activeIndex].columnID = state.tasks[overIndex].columnID;
+          //   return {
+          //     tasks: arrayMove(state.tasks, activeIndex, overIndex),
+          //   };
+          // }
+
+          // // Dropping task into a column
+          // if (isActiveTask && isOverColumn) {
+          //   state.tasks[activeIndex].columnID = overTaskID;
+          //   return {
+          //     tasks: [...state.tasks],
+          //   };
+          // }
+
+          // return {}; ///past this point
           const activeIndex = state.tasks.findIndex(
             (t) => t.id === activeTaskID
           );
-          if (activeIndex === -1) return state;
+          if (activeIndex === -1) return {};
 
           let updatedTasks = [...state.tasks];
 
           // Dropping task over another task
           if (isActiveTask && isOverTask) {
             const overIndex = state.tasks.findIndex((t) => t.id === overTaskID);
-            if (overIndex === -1) return state;
+            if (overIndex === -1) return {};
 
             updatedTasks[activeIndex].columnID =
               updatedTasks[overIndex].columnID;
-            updatedTasks = arrayMove(updatedTasks, activeIndex, overIndex);
+            updatedTasks = arrayMove(updatedTasks, activeIndex, overIndex).map(
+              (task, index) => ({
+                ...task,
+                position: index, // Update position after moving
+              })
+            );
           }
 
           // Dropping task into a column
           if (isActiveTask && isOverColumn) {
             updatedTasks[activeIndex].columnID = overTaskID;
+            updatedTasks = updatedTasks.map((task, index) => ({
+              ...task,
+              position: index, // Update position after moving
+            }));
           }
 
-          return { tasks: updatedTasks }; // Synchronous state update
-        });
-
-        // Perform the async API call separately
-        // try {
-        //   await fetch(`/api/tasks/${activeTaskID}/move`, {
-        //     method: "PATCH",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //     },
-        //     body: JSON.stringify({
-        //       columnID: overTaskID,
-        //     }),
-        //   });
-        // } catch (error) {
-        //   console.error("Error moving task:", error);
-        // }
-      },
+          return { tasks: updatedTasks };
+        }),
     }),
     {
       name: "task-store",

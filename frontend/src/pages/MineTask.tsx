@@ -123,7 +123,6 @@ function MineTask() {
                                                 <ColumnContainer
                                                     key={column.id}
                                                     column={column}
-                                                    createTask={createTask}
                                                     tasks={tasks.filter((task) => task.columnID === column.id)}
                                                     deleteTask={deleteTask}
                                                     updateTask={updateTask}
@@ -138,7 +137,6 @@ function MineTask() {
                                         {activeColumn && (
                                             <ColumnContainer
                                                 column={activeColumn}
-                                                createTask={createTask}
                                                 tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
                                                 deleteTask={deleteTask}
                                                 updateTask={updateTask}
@@ -157,22 +155,8 @@ function MineTask() {
                 :
                 <FobiddenPage />
             }
-
         </>
     )
-
-    function generateId() {
-        return Math.floor(Math.random() * 1000)
-    }
-
-    function createTask(columnID: ID) {
-        const newTask: Task = {
-            id: generateId(),
-            columnID,
-            content: `Task ${tasks.length + 1}`
-        }
-        setTasks([...tasks, newTask])
-    }
     function deleteTask(id: ID) {
         const newTasks = tasks.filter((task) => task.id !== id);
         setTasks(newTasks)
@@ -205,25 +189,11 @@ function MineTask() {
         const activeColumnID = active.id;
         const overColumnID = over.id;
         if (activeColumnID === overColumnID) return;
-        // const reOderColumns = async () => {
-        //     const res = await fetch(`${backEndBaseURL}/api/user/${currentAuth}/column/reorder/${activeColumnID}/${overColumnID}`, {
-        //         method: "PATCH",
-        //         headers: {
-        //             'Content-Type': 'application/json',
-        //         }
-        //     })
-        //     if (!res.ok) {
-        //         throw new Error("reordering failed")
-        //     }
-        // }
-        // reOderColumns()
         useColumnStore.getState().moveColumn(activeColumnID, overColumnID);
-
     }
 
 
     function onDrageOverFNC(e: DragOverEvent) {
-
         const { active, over } = e;
         if (!over) return;
 

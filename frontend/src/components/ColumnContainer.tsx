@@ -1,7 +1,6 @@
 import { Column, ID, Task } from "@/type"
 import { Button } from "./ui/button";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { CiCirclePlus } from "react-icons/ci";
 import { FaCheck } from "react-icons/fa";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities"
@@ -13,14 +12,13 @@ import ModalPopUp from "./Modal";
 
 interface Props {
     column: Column;
-    createTask: (columnID: ID) => void;
     tasks: Task[];
     deleteTask: (id: ID) => void;
     updateTask: (id: ID, content: string) => void;
 }
 
 function ColumnContainer(props: Props) {
-    const { column, createTask, tasks, deleteTask, updateTask } = props;
+    const { column, tasks, deleteTask, updateTask } = props;
     const [updateTitle, setUpdateTitle] = useState("")
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const deleteCol = useColumnStore((state) => state.deleteColumn);
@@ -154,9 +152,6 @@ function ColumnContainer(props: Props) {
                     ))}
                 </SortableContext >
             </div>
-            <Button color="primary" size={"sm"} variant="outline" onClick={() => { createTask(column.id) }}>
-                <CiCirclePlus /> Add tasks
-            </Button>
             <ModalPopUp name="Add Task2" useFor="addTask" refID={column.id} />
         </div>
     )

@@ -13,6 +13,7 @@ const taskSchema = new mongoose.Schema(
       require: true,
     },
     content: { type: String, require: true },
+    position: { type: Number, required: true },
   },
   { timestamps: true }
 );

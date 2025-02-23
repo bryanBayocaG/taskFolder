@@ -10,9 +10,9 @@ export const getTask = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
-    const tasks = await Task.find({ createdBy: user._id }).select(
-      "-__v -createdAt -updatedAt"
-    );
+    const tasks = await Task.find({ createdBy: user._id })
+      .select("-__v -createdAt -updatedAt")
+      .sort({ position: 1 });
     if (tasks.length === 0) {
       return res.status(200).json({ message: "No columns found", data: [] });
     }
@@ -48,10 +48,15 @@ export const addTask = async (req: Request, res: Response) => {
     if (duplicateTask) {
       return res.status(409).json({ message: "task already exist" });
     }
+    const taskCount = await Task.countDocuments({
+      columnID,
+      createdBy: user._id,
+    });
     const newTask = new Task({
       columnID,
       createdBy: user._id,
       content,
+      position: taskCount,
     });
     await newTask.save();
 
