@@ -209,6 +209,8 @@ function MineTask() {
         if (!isActiveTask) return;
 
         const isOverColumn = over.data.current?.type === "Column"
+        console.log("binuhat", activeTaskID)
+        console.log("nilapagan", overTaskID)
         useTaskStore.getState().moveTask(activeTaskID, overTaskID, isActiveTask, isOverTask, isOverColumn);
     }
 }

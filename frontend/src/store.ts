@@ -181,31 +181,6 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
         isOverColumn
       ) =>
         set((state) => {
-          // const activeIndex = state.tasks.findIndex(
-          //   (t) => t.id === activeTaskID
-          // );
-          // if (activeIndex === -1) return {};
-
-          // // Dropping task over another task
-          // if (isActiveTask && isOverTask) {
-          //   const overIndex = state.tasks.findIndex((t) => t.id === overTaskID);
-          //   if (overIndex === -1) return {};
-
-          //   state.tasks[activeIndex].columnID = state.tasks[overIndex].columnID;
-          //   return {
-          //     tasks: arrayMove(state.tasks, activeIndex, overIndex),
-          //   };
-          // }
-
-          // // Dropping task into a column
-          // if (isActiveTask && isOverColumn) {
-          //   state.tasks[activeIndex].columnID = overTaskID;
-          //   return {
-          //     tasks: [...state.tasks],
-          //   };
-          // }
-
-          // return {}; ///past this point
           const activeIndex = state.tasks.findIndex(
             (t) => t.id === activeTaskID
           );
@@ -217,25 +192,25 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
           if (isActiveTask && isOverTask) {
             const overIndex = state.tasks.findIndex((t) => t.id === overTaskID);
             if (overIndex === -1) return {};
-
             updatedTasks[activeIndex].columnID =
               updatedTasks[overIndex].columnID;
-            updatedTasks = arrayMove(updatedTasks, activeIndex, overIndex).map(
-              (task, index) => ({
-                ...task,
-                position: index, // Update position after moving
-              })
-            );
+            updatedTasks = arrayMove(updatedTasks, activeIndex, overIndex);
           }
 
           // Dropping task into a column
           if (isActiveTask && isOverColumn) {
             updatedTasks[activeIndex].columnID = overTaskID;
-            updatedTasks = updatedTasks.map((task, index) => ({
-              ...task,
-              position: index, // Update position after moving
-            }));
           }
+
+          const groupedTasks = updatedTasks.reduce((acc, task) => {
+            if (!acc[task.columnID]) acc[task.columnID] = [];
+            acc[task.columnID].push(task);
+            return acc;
+          }, {} as Record<string, Task[]>);
+
+          updatedTasks = Object.values(groupedTasks).flatMap((tasks) =>
+            tasks.map((task, index) => ({ ...task, position: index }))
+          );
 
           const reOrderTask = async () => {
             try {

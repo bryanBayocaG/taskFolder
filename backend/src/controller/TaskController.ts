@@ -109,14 +109,14 @@ export const reorderTask = async (req: Request, res: Response) => {
   try {
     const { tasks } = req.body;
     console.log("reorderTas", tasks);
-    // const bulkOperations = tasks.map((task: TaskType, index: number) => ({
-    //   updateOne: {
-    //     filter: { _id: task.id },
-    //     update: { position: index, columnID: task.columnID }, // Ensure columnID updates
-    //   },
-    // }));
+    const bulkOperations = tasks.map((task: TaskType, index: number) => ({
+      updateOne: {
+        filter: { _id: task.id },
+        update: { position: index, columnID: task.columnID }, // Ensure columnID updates
+      },
+    }));
 
-    // await Task.bulkWrite(bulkOperations);
+    await Task.bulkWrite(bulkOperations);
 
     return res
       .status(200)
