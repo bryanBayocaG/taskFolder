@@ -25,6 +25,7 @@ function MineTask() {
 
     const [isLoading, setLoading] = useState(false);
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
+    // console.log("default", tasks)
 
     // const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -209,8 +210,7 @@ function MineTask() {
         if (!isActiveTask) return;
 
         const isOverColumn = over.data.current?.type === "Column"
-        console.log("binuhat", activeTaskID)
-        console.log("nilapagan", overTaskID)
+
         useTaskStore.getState().moveTask(activeTaskID, overTaskID, isActiveTask, isOverTask, isOverColumn);
     }
 }

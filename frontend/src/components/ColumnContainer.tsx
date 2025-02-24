@@ -9,6 +9,7 @@ import TaskContainer from "./TaskContainer";
 import { useAuthStore, useColumnStore } from "@/store";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import ModalPopUp from "./Modal";
+import { toast } from "react-toastify";
 
 interface Props {
     column: Column;
@@ -59,11 +60,11 @@ function ColumnContainer(props: Props) {
                 throw new Error("column not deleted")
             }
             const data = await res.json();
-            console.log("deleted baby", data)
+            toast.success(data.message)
             deleteCol(id);
         } catch (error) {
             if (error instanceof Error) {
-                console.log(error.message)
+                throw new Error(error.message)
             }
         }
 

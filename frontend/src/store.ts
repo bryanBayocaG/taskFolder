@@ -201,17 +201,18 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
           if (isActiveTask && isOverColumn) {
             updatedTasks[activeIndex].columnID = overTaskID;
           }
-
-          const groupedTasks = updatedTasks.reduce((acc, task) => {
-            if (!acc[task.columnID]) acc[task.columnID] = [];
-            acc[task.columnID].push(task);
-            return acc;
+          const taskGroup = updatedTasks.reduce((groupedTask, task) => {
+            const group = task.columnID;
+            if (groupedTask[group] == null) groupedTask[group] = [];
+            groupedTask[group].push(task);
+            return groupedTask;
           }, {} as Record<string, Task[]>);
 
-          updatedTasks = Object.values(groupedTasks).flatMap((tasks) =>
+          console.log("bingbong", taskGroup);
+
+          updatedTasks = Object.values(taskGroup).flatMap((tasks) =>
             tasks.map((task, index) => ({ ...task, position: index }))
           );
-
           const reOrderTask = async () => {
             try {
               const res = await fetch(`${backEndBaseURL}/api/task/reorder`, {

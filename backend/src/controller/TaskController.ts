@@ -108,7 +108,6 @@ export const deleteTask = async (req: Request, res: Response) => {
 export const reorderTask = async (req: Request, res: Response) => {
   try {
     const { tasks } = req.body;
-    console.log("reorderTas", tasks);
     const bulkOperations = tasks.map((task: TaskType, index: number) => ({
       updateOne: {
         filter: { _id: task.id },
