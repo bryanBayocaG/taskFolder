@@ -1,7 +1,6 @@
 import { useAuthStore, useColumnStore, useTaskStore } from "./store";
 
 const localStorageClear = () => {
-  console.log("clear is called");
   localStorage.removeItem("column-store");
   localStorage.removeItem("auth-store");
   localStorage.removeItem("theme-store");

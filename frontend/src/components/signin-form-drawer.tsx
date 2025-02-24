@@ -92,6 +92,7 @@ export default function SignInFormDrawer({ variant, size, className }: Props) {
     }
     const handleApiResponse = async (res: Response, user: User) => {
 
+
         const data = await res.json();
         if (res.ok) {
             if (data.message === "user not found") {
@@ -105,6 +106,8 @@ export default function SignInFormDrawer({ variant, size, className }: Props) {
             navigate("/myboard");
             toast.success("Login successfully");
             currentOn(user.uid, user.photoURL, user.email, user.displayName);
+
+            if (!user.email) throw new Error("User email is missing");
         } else {
             console.error(`Login failed with status: ${res.status}`);
             toast.error("Login failed");

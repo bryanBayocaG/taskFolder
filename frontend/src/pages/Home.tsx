@@ -1,10 +1,6 @@
 import { LoginForm } from '@/components/signup-form'
-import { useAuthStore, useColumnStore } from '@/store'
 
 function Home() {
-    const columns = useColumnStore((state) => state.columns)
-    const currentAuth = useAuthStore((state) => state.currentAuth)
-    console.log("outside", columns, currentAuth)
     return (
         <div className="grid h-full lg:grid-cols-2 ">
             <div className="flex flex-col gap-4 p-6 md:p-10">

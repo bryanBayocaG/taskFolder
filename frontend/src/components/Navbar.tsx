@@ -46,33 +46,39 @@ export default function Navbar() {
           <span className="font-bold">Task Folder</span>
         </a>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
-          <a
-            href={currentAuth ? "/mytask" : "/"}
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+          {!currentAuth ?
+            <>
+              <a
+                href="/about"
+                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
 
-          >
-            Home
-          </a>
-          <a
-            href="/about"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                About
+              </a>
+              <a
+                href="/services"
+                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
 
-          >
-            About
-          </a>
-          <a
-            href="/services"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                Services
+              </a>
+              <a
+                href="/contact"
+                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              >
+                Contact
+              </a>
+            </>
 
-          >
-            Services
-          </a>
-          <a
-            href="/contact"
-            className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-          >
-            Contact
-          </a>
+            :
+            <a
+              href="/myboard"
+              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+            >
+              My boards
+            </a>
+          }
+
 
         </nav>
         <div className="flex items-center gap-4">
