@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/dbConfig";
 import webRoute from "./routes/webRoute";
+import { Request, Response } from "express";
 
 dotenv.config();
 
@@ -12,11 +13,15 @@ const app = express();
 app.use(express.json()); // Allow JSON request bodies
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5000"] /* "*" */, // Allow only frontend origin
+    origin: ["http://localhost:5173"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
+
+app.get("/", (req: Request, res: Response) => {
+  res.send(" task folder api");
+});
 
 app.use("/api/", webRoute);
 
