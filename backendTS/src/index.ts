@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json()); // Allow JSON request bodies
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://task-folder.vercel.app"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
