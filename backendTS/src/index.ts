@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/dbConfig";
 import webRoute from "./routes/webRoute";
 import { Request, Response } from "express";
+import Board from "./model/Board.model";
 
 dotenv.config();
 
@@ -19,8 +20,9 @@ app.use(
   })
 );
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("task folder api TS");
+app.get("/", async (req: Request, res: Response) => {
+  const boards = await Board.find({ createdBy: "67b2edd34ebaef96de1dd7f6" });
+  res.send(boards);
 });
 
 app.use("/api/", webRoute);
