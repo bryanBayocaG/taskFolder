@@ -11,13 +11,14 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: ["https://task-folder.vercel.app"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: ["https://task-folder.vercel.app"],
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+//     credentials: true,
+//   })
+// );
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send(" task folder api JS");
