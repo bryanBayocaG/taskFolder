@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import webRoute from "./routes/webRoutes.js";
 import connectDB from "./config/dbConfig.js";
+import Board from "./model/Board.model.js";
 
 dotenv.config();
 
@@ -20,8 +21,9 @@ app.use(express.json());
 // );
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.send(" task folder api JS");
+app.get("/", async (req, res) => {
+  const boards = await Board.find({ createdBy: "67b2edd34ebaef96de1dd7f6" });
+  res.send(boards);
 });
 
 app.use("/api/", webRoute);
