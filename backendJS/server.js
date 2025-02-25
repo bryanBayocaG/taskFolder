@@ -8,23 +8,25 @@ dotenv.config();
 
 const app = express();
 
+// Connect to database
+connectDB();
+
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://your-frontend.vercel.app"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
 );
+
+// Test Route
 app.get("/", (req, res) => {
-  res.send(" task folder api JS");
+  res.send("Task folder API running on Vercel!");
 });
 
+// API Routes
 app.use("/api/", webRoute);
 
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  connectDB();
-  console.log(`Running at http://localhost:${PORT}`);
-});
+// Export app for Vercel
+export default app;
