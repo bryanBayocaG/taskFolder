@@ -94,6 +94,7 @@ export default function ModalPopUp({ name, useFor, refID }: Props) {
                 id: data.data._id,   //rename _id to id
                 columnID: data.data.columnID,  //rename columnName to title
                 content: data.data.content,
+                position: data.data.position,
             };
             addTask(formattedData)
             onOpenChange()

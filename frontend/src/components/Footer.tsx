@@ -1,5 +1,3 @@
-import React from 'react'
-
 function Footer() {
     return (
         <div className='flex p-5 h-fit dark:bg-black bg-white'>
