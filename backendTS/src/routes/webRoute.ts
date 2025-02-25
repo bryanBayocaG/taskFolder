@@ -8,7 +8,13 @@ import {
   reorderColumns,
   updateColumn,
 } from "../controller/ColumnController";
-import { addTask, getTask, reorderTask } from "../controller/TaskController";
+import {
+  addTask,
+  deleteTask,
+  editTask,
+  getTask,
+  reorderTask,
+} from "../controller/TaskController";
 import {
   addBoard,
   deleteBoard,
@@ -31,13 +37,12 @@ router.post("/user/:uid/column/:id", addColumn);
 router.get("/user/:uid/column/:id", getColumns);
 router.delete("/user/:uid/column/:id", deleteColumns);
 router.patch("/user/:uid/column/:id", updateColumn);
-// router.patch("/user/:uid/column/reorder/:activeID/:overID", reorderColumns);
 router.patch("/column/reorder/", reorderColumns);
 
 router.get("/user/:uid/task", getTask);
 router.post("/user/:uid/task/:id", addTask);
-router.patch("/user/:uid/task/:id", updateColumn);
-router.delete("/user/:uid/task/:id", deleteColumns);
+router.patch("/user/:uid/task/:id", editTask);
+router.delete("/user/:uid/task/:id", deleteTask);
 router.patch("/task/reorder/", reorderTask);
 
 export default router;

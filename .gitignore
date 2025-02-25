@@ -16,11 +16,17 @@ frontend/*.local
 frontend/.env
 frontend/.env.local
 
-backend/dist
-backend/dist-ssr
-backend/*.local
-backend/.env
-backend/.env.local
+backendTS/dist
+backendTS/dist-ssr
+backendTS/*.local
+backendTS/.env
+backendTS/.env.local
+
+backendJS/dist
+backendJS/dist-ssr
+backendJS/*.local
+backendJS/.env
+backendJS/.env.local
 
 # Editor directories and files
 .vscode/*
