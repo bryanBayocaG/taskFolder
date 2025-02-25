@@ -12,18 +12,16 @@ const app = express();
 connectDB();
 
 app.use(express.json());
-// app.use(
-//   cors({
-//     origin: ["https://task-folder.vercel.app"],
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-//     credentials: true,
-//   })
-// );
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://task-folder.vercel.app"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
 
 app.get("/", async (req, res) => {
-  const boards = await Board.find({ createdBy: "67b2edd34ebaef96de1dd7f6" });
-  res.send(boards);
+  res.send("task folder api");
 });
 
 app.use("/api/", webRoute);
