@@ -1,6 +1,6 @@
 import BoardCard from '@/components/BoardCard';
 import { useAuthStore } from '@/store';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import FobiddenPage from './FobiddenPage';
 import { Spinner } from '@heroui/react';
 import ModalPopUp from '@/components/Modal';
@@ -12,38 +12,35 @@ function Myboards() {
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const [boards, setBoards] = useState<Board[]>([])
     const [isLoading, setLoading] = useState(false);
-    useEffect(() => {
+
+    const fetchBoards = useCallback(async () => {
+        setLoading(true);
         try {
-            const fetchBoards = async () => {
-                setLoading(true);
-                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/board`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                })
-                if (!res.ok) {
-                    throw new Error("fetching boards failed")
-                }
-                const data = await res.json()
-                const transFormData = data.data.map((board: BackEndBoardData) => ({
-                    id: board._id,
-                    boardName: board.boardName,
-                    description: board.description,
-                    boardImg: board.boardImg,
-                }))
-                setBoards(transFormData)
-            }
-            fetchBoards()
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/board`, {
+                method: "GET",
+                headers: { "Content-Type": "application/json" }
+            });
+            if (!res.ok) throw new Error("Fetching boards failed");
+
+            const data = await res.json();
+            const transFormData = data.data.map((board: BackEndBoardData) => ({
+                id: board._id,
+                boardName: board.boardName,
+                description: board.description,
+                boardImg: board.boardImg,
+            }));
+
+            setBoards(transFormData);
         } catch (error) {
-            if (error instanceof Error) {
-                throw new Error(error.message)
-            }
+            console.error("Error fetching boards:", error);
         } finally {
             setLoading(false);
         }
+    }, [currentAuthUID]);
 
-    }, [setLoading, currentAuthUID])
+    useEffect(() => {
+        fetchBoards()
+    }, [fetchBoards])
     return (
         <>
             {currentAuth ?
@@ -57,7 +54,7 @@ function Myboards() {
                             <div className='h-28' />
                             <div className='mx-6'>
                                 <div>
-                                    <ModalPopUp name='Add board' useFor='addBoard' />
+                                    <ModalPopUp name='Add board' useFor='addBoard' fetchAgain={fetchBoards} />
                                 </div>
                             </div>
                             <div className="min-h-[500px] grid justify-items-center mx-3 md:mx-6 lg:mx-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5 overflow-x-hidden-hidden">

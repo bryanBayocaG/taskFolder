@@ -7,7 +7,7 @@ interface Props {
     id: string | number;
     img: string;
 }
-const defaultIMG = "https://media.istockphoto.com/id/1428668891/vector/escape-from-risk-or-danger-run-away-or-flee-from-fail-or-bankruptcy-company-change-job-or.jpg?s=612x612&w=0&k=20&c=uEieB2nCiaqRBsEZqbQ62NFpu5eMGy-Pln-HkZCg4dY="
+const defaultIMG = "https://moewalls.com/wp-content/uploads/2022/10/late-night-working-thumb.jpg"
 
 
 const BoardCard = ({ name, desc, id, img }: Props) => {
@@ -29,10 +29,10 @@ const BoardCard = ({ name, desc, id, img }: Props) => {
                     className="z-0 w-full h-full object-cover pointer-events-none"
                     src={img ? img : defaultIMG}
                 />
-                <CardFooter className="absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
+                <CardFooter className="h-16 md:h-16 lg:h-20 absolute bg-black/40 bottom-0 z-10 border-t-1 border-default-600 dark:border-default-100">
                     <div className="flex flex-grow gap-2 items-center">
                         <div className="flex flex-col">
-                            <p className="text-tiny text-balance text-white/60">{desc}</p>
+                            <p className="text-tiny text-balance text-white/60 first-letter:uppercase">{desc}</p>
                         </div>
                     </div>
 

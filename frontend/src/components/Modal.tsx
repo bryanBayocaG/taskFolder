@@ -6,6 +6,7 @@ import {
     useDisclosure,
     Divider,
     Input,
+    Textarea,
 } from "@heroui/react";
 import { Button } from "@/components/ui/button";
 import { CiCirclePlus } from "react-icons/ci";
@@ -19,14 +20,16 @@ interface Props {
     name: string;
     useFor: "addColumn" | "addTask" | "addBoard";
     refID?: string | number;
+    fetchAgain?: () => void;
 }
 
-export default function ModalPopUp({ name, useFor, refID }: Props) {
+export default function ModalPopUp({ name, useFor, refID, fetchAgain }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const addColumn = useColumnStore((state) => state.addColumn);
     const addTask = useTaskStore((state) => state.addTask);
     const [nameInput, setName] = useState("")
+    const [description, setDescription] = useState("")
 
     const addColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
@@ -106,6 +109,38 @@ export default function ModalPopUp({ name, useFor, refID }: Props) {
             }
         }
     }
+
+    const addBoardSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        try {
+            e.preventDefault();
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/board`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    boardName: nameInput.toLocaleLowerCase(),
+                    description: description.toLocaleLowerCase()
+                })
+            })
+            if (res.status === 409) {
+                toast.warning("Board already exist.")
+                return;
+            }
+            if (!res.ok) {
+                throw new Error("A problem with adding a board.");
+            }
+
+            onOpenChange()
+            setName("")
+            fetchAgain?.()
+            toast.success("Board added successfully")
+        } catch (error) {
+            if (error instanceof Error) {
+                console.log(error.message)
+            }
+        }
+    }
     return (
         <>
             <Button onClick={onOpen} variant={"outline"}>
@@ -174,7 +209,32 @@ export default function ModalPopUp({ name, useFor, refID }: Props) {
                                         </div>
                                     </form>
                                 ) : (
-                                    <p>addBoard</p>
+                                    <form className="w-full" onSubmit={addBoardSubmit}>
+                                        <Input
+                                            isRequired
+                                            label="Column name"
+                                            labelPlacement="outside"
+                                            placeholder="Enter name of column"
+                                            variant="underlined"
+                                            type="text"
+                                            value={nameInput}
+                                            onChange={e => setName(e.target.value)}
+                                        />
+                                        <Textarea
+                                            className="col-span-12 md:col-span-6 mb-6 mt-5 md:mb-0"
+                                            label="Description"
+                                            labelPlacement="outside"
+                                            placeholder="Enter your description"
+                                            variant="underlined"
+                                            value={description}
+                                            onChange={e => setDescription(e.target.value)}
+                                        />
+                                        <div className="flex justify-center w-full mt-5">
+                                            <Button variant="outline" type="submit" size="lg">
+                                                Submit
+                                            </Button>
+                                        </div>
+                                    </form>
                                 )
 
                                 }

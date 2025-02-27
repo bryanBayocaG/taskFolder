@@ -2,7 +2,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent } from "@/compon
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
-import { ModeToggle } from "./mode-toggle"
+// import { ModeToggle } from "./mode-toggle"
 import { DropdownProfile } from "./DropdownProfile"
 import { useAuthStore } from "@/store"
 import AvatarProf from "./AvatarProf"
@@ -96,7 +96,7 @@ export default function Navbar() {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-          <ModeToggle />
+          {/* <ModeToggle /> */}
           {currentAuth ?
             <div className="hidden md:block">
               <DropdownProfile />

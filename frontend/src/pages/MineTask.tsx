@@ -109,7 +109,7 @@ function MineTask() {
                             <div className="h-[90px] md:h-[120px]"></div>
                             <div className="mx-10">
                                 <p className="font-bold text-xl md:text-3xl">
-                                    {name} - Board
+                                    <span className="capitalize">{name}</span> - Board
                                 </p>
                             </div>
                             <DndContext
