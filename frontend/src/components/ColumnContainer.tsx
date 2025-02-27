@@ -56,10 +56,11 @@ function ColumnContainer(props: Props) {
                     "Content-Type": "application/json"
                 },
             })
-            if (!res.ok) {
-                throw new Error("column not deleted")
-            }
             const data = await res.json();
+            if (data.message === "column contains tasks") {
+                toast.warning("Column contains tasks, empty it first")
+                return
+            }
             toast.success(data.message)
             deleteCol(id);
         } catch (error) {
@@ -102,7 +103,7 @@ function ColumnContainer(props: Props) {
     }
 
     return (
-        <div ref={setNodeRef} style={myStyle} className="backdrop-blur-[16px] shadow-2xl p-1 w-[350px] min:h-[500px]  rounded-md flex flex-col">
+        <div ref={setNodeRef} style={myStyle} className="backdrop-blur-[16px] shadow-2xl p-1 w-[350px] min:h-[500px]  rounded-md flex flex-col touch-none">
             <div {...attributes} {...listeners} onClick={() => { setEditMode(true) }} className="bg-gray-400 dark:bg-gray-900 p-2 rounded-t-md flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <div className="flex justify-center items-center bg-white dark:bg-gray-950 px-2 py-1 text-sm rounded-full">0</div>

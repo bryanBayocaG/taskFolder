@@ -1,8 +1,8 @@
 import ColumnContainer from "@/components/ColumnContainer";
 import { BackEndColumnData, BackEndTaskData, Column, ID, Task } from "@/type";
 import { useEffect, useMemo, useState } from "react";
-import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent } from "@dnd-kit/core"
-import { SortableContext } from '@dnd-kit/sortable';
+import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent, TouchSensor, KeyboardSensor } from "@dnd-kit/core"
+import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { createPortal } from "react-dom";
 import TaskContainer from "@/components/TaskContainer";
 import { useAuthStore, useColumnStore, useTaskStore } from "@/store";
@@ -35,6 +35,10 @@ function MineTask() {
             activationConstraint: {
                 distance: 1,
             }
+        }),
+        useSensor(TouchSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
         })
     )
     useEffect(() => {

@@ -1,5 +1,6 @@
 import User from "../model/User.model.js";
 import Board from "../model/Board.model.js";
+import Column from "../model/Column.model.js";
 
 export const addBoard = async (req, res) => {
   try {
@@ -59,6 +60,10 @@ export const deleteBoard = async (req, res) => {
     const user = await User.findOne({ uid });
     if (!user) {
       return res.status(404).json({ message: "user not found" });
+    }
+    const columnCount = await Column.countDocuments({ boardFrom: id });
+    if (columnCount > 0) {
+      return res.status(403).json({ message: "board contains columns" });
     }
     const result = await Board.deleteOne({ _id: id });
     if (result.deletedCount === 0) {

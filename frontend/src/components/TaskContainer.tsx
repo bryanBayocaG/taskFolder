@@ -78,7 +78,7 @@ function TaskContainer({ task, deleteTask, updateTask }: Props) {
             key={task.id}
             onMouseEnter={() => { setMouseIsOver(true) }}
             onMouseLeave={() => { setMouseIsOver(false) }}
-            className="flex bg-slate-400 dark:bg-zinc-600 p-2 rounded-md items-center text-left hover:ring-2 hover:ring-inset hover:ring-sky-500 cursor-grab h-[100px] min-h-[100px]"
+            className="touch-none flex bg-slate-400 dark:bg-zinc-600 p-2 rounded-md items-center text-left hover:ring-2 hover:ring-inset hover:ring-sky-500 cursor-grab h-[100px] min-h-[100px]"
         >
             <div className="flex-[12] overflow-hidden p-1">
                 <p className="h-[90%] w-full overflow-y-auto">

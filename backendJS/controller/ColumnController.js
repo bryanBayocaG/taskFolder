@@ -1,5 +1,6 @@
 import Board from "../model/Board.model.js";
 import Column from "../model/Column.model.js";
+import Task from "../model/Task,model.js";
 import User from "../model/User.model.js";
 
 export const addColumn = async (req, res) => {
@@ -70,6 +71,10 @@ export const getColumns = async (req, res) => {
 export const deleteColumns = async (req, res) => {
   try {
     const { id } = req.params;
+    const taskCount = await Task.countDocuments({ columnID: id });
+    if (taskCount > 0) {
+      return res.status(403).json({ message: "column contains tasks" });
+    }
     const result = await Column.deleteOne({ _id: id });
     if (result.deletedCount === 0) {
       return res
