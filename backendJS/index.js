@@ -14,7 +14,7 @@ connectDB();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["https://task-folder.vercel.app"],
+    origin: [`${process.env.ALLOWED_URL}`],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     credentials: true,
   })
