@@ -4,7 +4,7 @@
 
 ## 📄 Description
 
-It’s one of my passion projects, built using the MERN stack with Zustand for state management. Users can create boards, add draggable columns, and manage tasks seamlessly. Every column and task is fully draggable, and their positions aren’t just updated in the UI—they’re also persistently stored in a NoSQL database.
+It’s one of my passion projects, built using the MERN stack with Zustand for state management. Users can create boards, add draggable columns, and manage tasks seamlessly. Every column and task is fully draggable, and their positions aren’t just updated in the UI—they’re also persistently stored in a NoSQL database. I have created two versions of backend, one is built vanilla Javascript and other in Typescript.
 
 ## 🚀 Features
 
