@@ -1,16 +1,25 @@
-# Project Title [Live Demo](https://your-deployed-link.com)
+# 🌐 Task Folder [Live Demo](https://task-folder.vercel.app/)
 
-## Description
+## 📄 Description
 
-A brief description of your project, what it does, and its purpose.
+It’s one of my passion projects, built using the MERN stack with Zustand for state management. Users can create boards, add draggable columns, and manage tasks seamlessly. Every column and task is fully draggable, and their positions aren’t just updated in the UI—they’re also persistently stored in a NoSQL database.
 
-## Status
+## 🚀 Features
 
-Current status of the project (e.g., In Development, Beta, Released).
+- Boards & Columns
+  - Create multiple boards
+  - Add, rename, and delete columns
+- Drag-and-drop functionality
+  - Move tasks between columns
+  - Reorder columns within a board
+- Data persistence
+  - Uses NoSQL database
+  - Syncs across sessions
 
-## Tech Stack
+## 🟢 Status
 
-- **Frontend:** List frontend technologies (e.g., React, Vue, Angular)
-- **Backend:** List backend technologies (e.g., Node.js, Django, Flask)
-- **Database:** Mention the database used (e.g., PostgreSQL, MongoDB, MySQL)
-- **Other:** Any additional tools or services used (e.g., Docker, Redis, GraphQL)
+Current status of the project: In Development.
+
+## 🛠 Tech Stack
+
+<img src="https://skillicons.dev/icons?i=react,typescript,tailwind,express,mongodb,nodejs,firebase," />
