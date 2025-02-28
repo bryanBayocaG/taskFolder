@@ -1,6 +1,6 @@
-# 🌐 Task Folder
+# Task Folder
 
-[Visit Demo](https://task-folder.vercel.app/)
+🌐 [Visit Demo](https://task-folder.vercel.app/)
 
 ## 📄 Description
 
