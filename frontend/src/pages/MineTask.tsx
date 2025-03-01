@@ -11,6 +11,7 @@ import { backEndBaseURL } from "@/utils/baseUrl";
 import { Spinner } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";
 import { useParams } from "react-router-dom";
+import { IoSettingsOutline } from "react-icons/io5";
 
 function MineTask() {
     const { id, name } = useParams();
@@ -25,9 +26,6 @@ function MineTask() {
 
     const [isLoading, setLoading] = useState(false);
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
-    // console.log("default", tasks)
-
-    // const [tasks, setTasks] = useState<Task[]>([])
     const [activeColumn, setActiveColumn] = useState<Column | null>(null);
     const [activeTask, setActiveTask] = useState<Task | null>(null);
     const sensors = useSensors(
@@ -111,10 +109,13 @@ function MineTask() {
                         :
                         <>
                             <div className="h-[90px] md:h-[120px]"></div>
-                            <div className="mx-10">
+                            <div className="flex gap-5 mx-10 items-center">
                                 <p className="font-bold text-xl md:text-3xl">
                                     <span className="capitalize">{name}</span> - Board
                                 </p>
+                                <div>
+                                    <ModalPopUp Icon={IoSettingsOutline} useFor='boardSetting' />
+                                </div>
                             </div>
                             <DndContext
                                 onDragStart={onDragStartFNC}

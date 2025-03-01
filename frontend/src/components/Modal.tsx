@@ -15,15 +15,17 @@ import { useAuthStore, useColumnStore, useTaskStore } from "@/store";
 import { backEndBaseURL } from "@/utils/baseUrl";
 import { Column, Task } from "@/type";
 import { toast } from "react-toastify";
+import { IconType } from "react-icons";
 
 interface Props {
-    name: string;
-    useFor: "addColumn" | "addTask" | "addBoard";
+    name?: string;
+    useFor: "addColumn" | "addTask" | "addBoard" | "boardSetting";
     refID?: string | number;
     fetchAgain?: () => void;
+    Icon?: IconType
 }
 
-export default function ModalPopUp({ name, useFor, refID, fetchAgain }: Props) {
+export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Props) {
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const addColumn = useColumnStore((state) => state.addColumn);
@@ -141,11 +143,20 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain }: Props) {
             }
         }
     }
+
+    const boardSettingSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
+    }
     return (
         <>
             <Button onClick={onOpen} variant={"outline"}>
-                <CiCirclePlus />
-                {name}
+                {Icon ?
+                    <Icon /> :
+                    <CiCirclePlus />
+                }
+                {name &&
+                    name
+                }
             </Button>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="lg" backdrop="blur" className="dark:bg-gray-950">
                 <ModalContent>
@@ -162,6 +173,11 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain }: Props) {
                                     <div>
                                         <p>Add Task</p>
                                         <p className="text-sm font-thin">More task to accomplish</p>
+                                    </div>
+                                ) : useFor === "boardSetting" ? (
+                                    <div>
+                                        <p>Board setting</p>
+                                        <p className="text-sm font-thin">Edit board setting and details</p>
                                     </div>
                                 ) : (
                                     <div>
@@ -208,13 +224,40 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain }: Props) {
                                             </Button>
                                         </div>
                                     </form>
+                                ) : useFor === "boardSetting" ? (
+                                    <form className="w-full" onSubmit={boardSettingSubmit}>
+                                        <Input
+                                            isRequired
+                                            label="Board name"
+                                            labelPlacement="outside"
+                                            placeholder="Enter name of board"
+                                            variant="underlined"
+                                            type="text"
+                                            value={nameInput}
+                                            onChange={e => setName(e.target.value)}
+                                        />
+                                        <Textarea
+                                            className="col-span-12 md:col-span-6 mb-6 mt-5 md:mb-0"
+                                            label="Description"
+                                            labelPlacement="outside"
+                                            placeholder="Enter your description"
+                                            variant="underlined"
+                                            value={description}
+                                            onChange={e => setDescription(e.target.value)}
+                                        />
+                                        <div className="flex justify-center w-full mt-5">
+                                            <Button variant="outline" type="submit" size="lg">
+                                                Submit
+                                            </Button>
+                                        </div>
+                                    </form>
                                 ) : (
                                     <form className="w-full" onSubmit={addBoardSubmit}>
                                         <Input
                                             isRequired
-                                            label="Column name"
+                                            label="Board name"
                                             labelPlacement="outside"
-                                            placeholder="Enter name of column"
+                                            placeholder="Enter name of board"
                                             variant="underlined"
                                             type="text"
                                             value={nameInput}
