@@ -145,7 +145,13 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
     }
 
     const boardSettingSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-
+        try {
+            e.preventDefault();
+        } catch (error) {
+            if (error instanceof Error) {
+                console.log(error.message)
+            }
+        }
     }
     return (
         <>
