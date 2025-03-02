@@ -19,7 +19,7 @@ import { IconType } from "react-icons";
 
 interface Props {
     name?: string;
-    useFor: "addColumn" | "addTask" | "addBoard" | "boardSetting";
+    useFor: "addColumn" | "addTask" | "addBoard" | "deleteBoard";
     refID?: string | number;
     fetchAgain?: () => void;
     Icon?: IconType
@@ -30,8 +30,9 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
     const addColumn = useColumnStore((state) => state.addColumn);
     const addTask = useTaskStore((state) => state.addTask);
-    const [nameInput, setName] = useState("")
-    const [description, setDescription] = useState("")
+    const [nameInput, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [confirmationText, setConfirmationText] = useState("");
 
     const addColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
@@ -144,9 +145,14 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
         }
     }
 
-    const boardSettingSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const deleteBoard = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
             e.preventDefault();
+            if (confirmationText !== "I want to delete this board") {
+                toast.error("Text don't match!")
+                return
+            }
+            toast.success("Board deleted!")
         } catch (error) {
             if (error instanceof Error) {
                 console.log(error.message)
@@ -155,7 +161,7 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
     }
     return (
         <>
-            <Button onClick={onOpen} variant={"outline"}>
+            <Button onClick={onOpen} variant={"outline"} >
                 {Icon ?
                     <Icon /> :
                     <CiCirclePlus />
@@ -180,10 +186,10 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
                                         <p>Add Task</p>
                                         <p className="text-sm font-thin">More task to accomplish</p>
                                     </div>
-                                ) : useFor === "boardSetting" ? (
+                                ) : useFor === "deleteBoard" ? (
                                     <div>
-                                        <p>Board setting</p>
-                                        <p className="text-sm font-thin">Edit board setting and details</p>
+                                        <p>Are you sure to delete this board?</p>
+                                        <p className="text-sm font-thin">Type "<span className="text-sky-400 font-bold">I want to delete this board</span>" below to proceed.</p>
                                     </div>
                                 ) : (
                                     <div>
@@ -230,26 +236,16 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
                                             </Button>
                                         </div>
                                     </form>
-                                ) : useFor === "boardSetting" ? (
-                                    <form className="w-full" onSubmit={boardSettingSubmit}>
+                                ) : useFor === "deleteBoard" ? (
+                                    <form className="w-full" onSubmit={deleteBoard}>
                                         <Input
                                             isRequired
-                                            label="Board name"
+                                            label="Type here"
                                             labelPlacement="outside"
-                                            placeholder="Enter name of board"
-                                            variant="underlined"
+                                            variant="flat"
                                             type="text"
-                                            value={nameInput}
-                                            onChange={e => setName(e.target.value)}
-                                        />
-                                        <Textarea
-                                            className="col-span-12 md:col-span-6 mb-6 mt-5 md:mb-0"
-                                            label="Description"
-                                            labelPlacement="outside"
-                                            placeholder="Enter your description"
-                                            variant="underlined"
-                                            value={description}
-                                            onChange={e => setDescription(e.target.value)}
+                                            value={confirmationText}
+                                            onChange={e => setConfirmationText(e.target.value)}
                                         />
                                         <div className="flex justify-center w-full mt-5">
                                             <Button variant="outline" type="submit" size="lg">

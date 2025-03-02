@@ -81,10 +81,8 @@ export const deleteBoard = async (req, res) => {
 export const updateBoard = async (req, res) => {
   try {
     const { uid, id } = req.params;
-    const updates = req.body;
-    const user = await User.findOne({ uid }).select(
-      "-__v -createdAt -updatedAt"
-    );
+    const { updates } = req.body;
+    const user = await User.findOne({ uid });
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -99,7 +97,11 @@ export const updateBoard = async (req, res) => {
 
     return res
       .status(200)
-      .json({ message: "board updated successfully", data: updatedColumn });
+      .json({
+        success: true,
+        message: "board updated successfully",
+        data: updatedColumn,
+      });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

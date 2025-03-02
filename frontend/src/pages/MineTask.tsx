@@ -11,8 +11,9 @@ import { backEndBaseURL } from "@/utils/baseUrl";
 import { Spinner, Textarea } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";
 import { useParams } from "react-router-dom";
-// import { IoSettingsOutline } from "react-icons/io5";
+import { IoSettingsOutline, IoAlbumsOutline, IoCogOutline, IoPeopleOutline, IoTrashOutline } from "react-icons/io5";
 import { Tabs, Tab } from "@heroui/tabs";
+import { toast } from "react-toastify";
 
 
 function MineTask() {
@@ -43,84 +44,108 @@ function MineTask() {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     )
+    const fetchBoardData = async () => {
+        try {
+            const res = await fetch(`${backEndBaseURL}/api/board/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            if (!res.ok) {
+                throw new Error('Failed to fetch board data');
+            }
+            const data = await res.json()
+            setBoardData(data.data)
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message)
+            }
+        }
+    }
+
+    const fetchColumns = async () => {
+        try {
+            setLoading(true);
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            if (!res.ok) {
+                throw new Error('Failed to fetch columns');
+            }
+            const data = await res.json()
+            const transformedColumns = data.data.map((column: BackEndColumnData) => ({
+                id: column._id,
+                title: column.columnName,
+                position: column.position,
+            }));
+            setColumns(transformedColumns);
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message)
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
+    const fetchTasks = async () => {
+        try {
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/task`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            if (!res.ok) {
+                throw new Error('Failed to fetch columns');
+            }
+            const data = await res.json()
+            const transformedTasks = data.data.map((task: BackEndTaskData) => ({
+                id: task._id,
+                columnID: task.columnID,
+                content: task.content,
+                position: task.position
+            }));
+
+            setTasks(transformedTasks);
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message)
+            }
+        }
+    }
+    const handleBoardEdit = async () => {
+        try {
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/board/${id}`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    updates: boardData
+                })
+            })
+
+            const data = await res.json()
+            if (data.success) {
+                fetchBoardData();
+                toast.success("Changes has been applied.")
+            }
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new Error(error.message)
+            }
+        }
+    }
     useEffect(() => {
-        const fetchColumns = async () => {
-            try {
-                setLoading(true);
-                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column/${id}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                })
-                if (!res.ok) {
-                    throw new Error('Failed to fetch columns');
-                }
-                const data = await res.json()
-                const transformedColumns = data.data.map((column: BackEndColumnData) => ({
-                    id: column._id,
-                    title: column.columnName,
-                    position: column.position,
-                }));
-                setColumns(transformedColumns);
-            } catch (error) {
-                if (error instanceof Error) {
-                    throw new Error(error.message)
-                }
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        const fetchTasks = async () => {
-            try {
-                const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/task`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                })
-                if (!res.ok) {
-                    throw new Error('Failed to fetch columns');
-                }
-                const data = await res.json()
-                const transformedTasks = data.data.map((task: BackEndTaskData) => ({
-                    id: task._id,
-                    columnID: task.columnID,
-                    content: task.content,
-                    position: task.position
-                }));
-
-                setTasks(transformedTasks);
-            } catch (error) {
-                if (error instanceof Error) {
-                    throw new Error(error.message)
-                }
-            }
-        }
-        const fetchBoardData = async () => {
-            try {
-                const res = await fetch(`${backEndBaseURL}/api/board/${id}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                })
-                if (!res.ok) {
-                    throw new Error('Failed to fetch board data');
-                }
-                const data = await res.json()
-                setBoardData(data.data)
-            } catch (error) {
-                if (error instanceof Error) {
-                    throw new Error(error.message)
-                }
-            }
-        }
         fetchColumns();
         fetchTasks();
         fetchBoardData();
-    }, [currentAuthUID, setColumns, setTasks, id])
+    }, [])
+
     return (
         <>
             {currentAuth ?
@@ -132,7 +157,15 @@ function MineTask() {
                     <>
                         <div className="h-[90px] md:h-[120px]"></div>
                         <Tabs aria-label="Options" className="mx-10" defaultSelectedKey="settings">
-                            <Tab key="tasks" title="Tasks">
+                            <Tab
+                                key="tasks"
+                                title={
+                                    <div className="flex items-center space-x-2">
+                                        <IoAlbumsOutline />
+                                        <span>Task</span>
+                                    </div>
+                                }
+                            >
                                 <DndContext
                                     onDragStart={onDragStartFNC}
                                     onDragEnd={onDragEndFNC}
@@ -174,17 +207,33 @@ function MineTask() {
                                     )}
                                 </DndContext>
                             </Tab>
-                            <Tab key="settings" title="Settings">
+                            <Tab
+                                key="settings"
+                                title={
+                                    <div className="flex items-center space-x-2">
+                                        <IoSettingsOutline />
+                                        <span>Settings</span>
+                                    </div>
+                                }
+                            >
                                 <div className="h-[75vh] w-full justify-center m-auto flex  md:p-10">
-                                    <Tabs aria-label="Options" placement="start">
-                                        <Tab key="general" title="General">
+                                    <Tabs aria-label="Options" placement="start" >
+                                        <Tab key="general"
+                                            className=""
+                                            title={
+                                                <div className="flex items-center space-x-2">
+                                                    <IoCogOutline />
+                                                    <span>General</span>
+                                                </div>
+                                            }
+                                        >
                                             <div className="p-5  md:w-[700px]">
                                                 <h5 className="font-bold text-2xl pb-2">General</h5>
                                                 <hr className="bg-slate-400" />
                                                 <label htmlFor="boardName">Board name</label>
-                                                <div className="flex gap-4 justify-items-center">
+                                                <div className="flex justify-items-center mt-2">
                                                     <input
-                                                        value={boardData?.boardName || ""}
+                                                        value={boardData?.boardName ? boardData.boardName.charAt(0).toUpperCase() + boardData.boardName.slice(1) : ""}
                                                         onChange={e =>
                                                             setBoardData(prev => ({
                                                                 ...prev!,
@@ -195,35 +244,53 @@ function MineTask() {
                                                         type="text"
                                                         id="boardName"
                                                     />
-                                                    <button className="border border-gray-400 px-4 rounded-lg hover:bg-gray-700">
-                                                        Rename
-                                                    </button>
                                                 </div>
                                                 <div className="mt-10" />
                                                 <hr className="bg-slate-400" />
                                                 <label htmlFor="boardDescription">Board decription</label>
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 ">
                                                     <Textarea
-                                                        value={boardData?.description || ""}
+                                                        className="first-letter:capitalize"
+                                                        value={boardData?.description ? boardData.description.charAt(0).toUpperCase() + boardData.description.slice(1) : ""}
                                                         onChange={e =>
                                                             setBoardData(prev => ({
                                                                 ...prev!,
                                                                 description: e.target.value
                                                             }))
                                                         }
-                                                        className=""
                                                         placeholder="Enter your description"
                                                         variant="underlined"
                                                     />
-                                                    <div className="flex flex-col items-center ">
-                                                        <button className="border border-gray-400 py-1 px-6 rounded-lg hover:bg-gray-700 mt-auto">
-                                                            Change
-                                                        </button>
+                                                </div>
+                                                <div className="flex flex-col items-end mt-5">
+                                                    <button onClick={() => { handleBoardEdit() }} className="border border-gray-400 py-1 px-6 rounded-lg hover:bg-gray-700 mt-auto">
+                                                        Apply changes
+                                                    </button>
+                                                </div>
+                                                <h4 className="font-bold text-2xl mt-14">
+                                                    <span className="text-red-600">Danger</span> Zone
+                                                </h4>
+                                                <div className="border border-red-400 rounded-md  mt-3">
+                                                    <div className="grid grid-cols-1 md:flex p-2 rounded-md items-center gap-3">
+                                                        <div className=" flex-[3]">
+                                                            <p className="font-bold">Delete this board</p>
+                                                            <p className="text-xs">Once you delete a board, there is no going back. Please be certain.</p>
+                                                        </div>
+                                                        <div className="flex justify-center md:justify-end flex-1">
+                                                            <ModalPopUp name="Delete board" Icon={IoTrashOutline} useFor="deleteBoard" />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </Tab>
-                                        <Tab key="member" title="Member">
+                                        <Tab key="member"
+                                            title={
+                                                <div className="flex items-center space-x-2">
+                                                    <IoPeopleOutline />
+                                                    <span>Member</span>
+                                                </div>
+                                            }
+                                        >
                                             <div className="p-5 md:w-[700px]">
                                                 <h4 className="font-medium text-2xl">
                                                     Feature comming soon...
