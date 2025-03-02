@@ -8,13 +8,15 @@ import TaskContainer from "@/components/TaskContainer";
 import { useAuthStore, useColumnStore, useTaskStore } from "@/store";
 import FobiddenPage from "@/pages/FobiddenPage";
 import { backEndBaseURL } from "@/utils/baseUrl";
-import { Spinner } from "@heroui/react";
+import { Spinner, Textarea } from "@heroui/react";
 import ModalPopUp from "@/components/Modal";
 import { useParams } from "react-router-dom";
-import { IoSettingsOutline } from "react-icons/io5";
+// import { IoSettingsOutline } from "react-icons/io5";
+import { Tabs, Tab } from "@heroui/tabs";
+
 
 function MineTask() {
-    const { id, name } = useParams();
+    const { id } = useParams();
     const currentAuth = useAuthStore((state) => state.currentAuth)
     const currentAuthUID = useAuthStore((state) => state.currentAuthId)
 
@@ -101,64 +103,104 @@ function MineTask() {
     return (
         <>
             {currentAuth ?
-                <>
-                    {isLoading ?
-                        <div className="flex h-full w-full justify-center px-2">
-                            <Spinner size="lg" color="primary" />
-                        </div>
-                        :
-                        <>
-                            <div className="h-[90px] md:h-[120px]"></div>
-                            <div className="flex gap-5 mx-10 items-center">
-                                <p className="font-bold text-xl md:text-3xl">
-                                    <span className="capitalize">{name}</span> - Board
-                                </p>
-                                <div>
-                                    <ModalPopUp Icon={IoSettingsOutline} useFor='boardSetting' />
-                                </div>
-                            </div>
-                            <DndContext
-                                onDragStart={onDragStartFNC}
-                                onDragEnd={onDragEndFNC}
-                                sensors={sensors}
-                                onDragOver={onDrageOverFNC}
-                            >
-                                <div className={`${columns.length === 0 ? "h-[75vh] dark:bg-[#020817]" : "h-fit"} m-auto flex w-full items-center overflow-x-auto overflow-y-hidden p-10`}>
-                                    <div className="flex gap-5 mr-5">
-                                        <SortableContext items={columnsID}>
-                                            {columns.map((column) => (
+                <>{isLoading ?
+                    <div className="flex h-full w-full justify-center px-2">
+                        <Spinner size="lg" color="primary" />
+                    </div>
+                    :
+                    <>
+                        <div className="h-[90px] md:h-[120px]"></div>
+                        <Tabs aria-label="Options" className="mx-10" defaultSelectedKey="settings">
+                            <Tab key="tasks" title="Tasks">
+                                <DndContext
+                                    onDragStart={onDragStartFNC}
+                                    onDragEnd={onDragEndFNC}
+                                    sensors={sensors}
+                                    onDragOver={onDrageOverFNC}
+                                >
+                                    <div className={`${columns.length === 0 ? "h-[75vh] dark:bg-[#020817]" : "h-fit"} m-auto flex w-full items-center overflow-x-auto overflow-y-hidden p-10`}>
+                                        <div className="flex gap-5 mr-5">
+                                            <SortableContext items={columnsID}>
+                                                {columns.map((column) => (
+                                                    <ColumnContainer
+                                                        key={column.id}
+                                                        column={column}
+                                                        tasks={tasks.filter((task) => task.columnID === column.id)}
+                                                        deleteTask={deleteTask}
+                                                        updateTask={updateTask}
+                                                    />
+                                                ))}
+                                            </SortableContext>
+                                        </div>
+                                        <ModalPopUp name="Add another list" useFor="addColumn" refID={id} />
+                                    </div>
+                                    {createPortal(
+                                        <DragOverlay>
+                                            {activeColumn && (
                                                 <ColumnContainer
-                                                    key={column.id}
-                                                    column={column}
-                                                    tasks={tasks.filter((task) => task.columnID === column.id)}
+                                                    key={activeColumn.id}
+                                                    column={activeColumn}
+                                                    tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
                                                     deleteTask={deleteTask}
                                                     updateTask={updateTask}
                                                 />
-                                            ))}
-                                        </SortableContext>
-                                    </div>
-                                    <ModalPopUp name="Add another list" useFor="addColumn" refID={id} />
+                                            )}
+                                            {activeTask &&
+                                                <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
+                                            }
+                                        </DragOverlay>,
+                                        document.body
+                                    )}
+                                </DndContext>
+                            </Tab>
+                            <Tab key="settings" title="Settings">
+                                <div className="h-[75vh] w-full justify-center m-auto flex  md:p-10">
+                                    <Tabs aria-label="Options" placement="start">
+                                        <Tab key="general" title="General">
+                                            <div className="p-5  md:w-[700px]">
+                                                <h5 className="font-bold text-2xl pb-2">General</h5>
+                                                <hr className="bg-slate-400" />
+                                                <label htmlFor="boardName">Board name</label>
+                                                <div className="flex gap-4 justify-items-center">
+                                                    <input
+                                                        className="p-2 rounded-md w-full bg-gray-800 focus:bg-transparent"
+                                                        type="text"
+                                                        id="boardName" />
+                                                    <button className="border border-gray-400 px-4 rounded-lg hover:bg-gray-700">
+                                                        Rename
+                                                    </button>
+                                                </div>
+                                                <div className="mt-10" />
+                                                <hr className="bg-slate-400" />
+                                                <label htmlFor="boardDescription">Board decription</label>
+                                                <div className="flex gap-2">
+                                                    <Textarea
+                                                        className=""
+                                                        placeholder="Enter your description"
+                                                        variant="underlined"
+                                                    />
+                                                    <div className="flex flex-col items-center ">
+                                                        <button className="border border-gray-400 py-1 px-6 rounded-lg hover:bg-gray-700 mt-auto">
+                                                            Apply
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab>
+                                        <Tab key="member" title="Member">
+                                            <div className="p-5 md:w-[700px]">
+                                                <h4 className="font-medium text-2xl">
+                                                    Feature comming soon...
+                                                </h4>
+                                            </div>
+                                        </Tab>
+                                    </Tabs>
                                 </div>
-                                {createPortal(
-                                    <DragOverlay>
-                                        {activeColumn && (
-                                            <ColumnContainer
-                                                key={activeColumn.id}
-                                                column={activeColumn}
-                                                tasks={tasks.filter((task) => task.columnID === activeColumn.id)}
-                                                deleteTask={deleteTask}
-                                                updateTask={updateTask}
-                                            />
-                                        )}
-                                        {activeTask &&
-                                            <TaskContainer task={activeTask} deleteTask={deleteTask} updateTask={updateTask} />
-                                        }
-                                    </DragOverlay>,
-                                    document.body
-                                )}
-                            </DndContext>
-                        </>
-                    }
+                            </Tab>
+
+                        </Tabs>
+                    </>
+                }
                 </>
                 :
                 <FobiddenPage />
