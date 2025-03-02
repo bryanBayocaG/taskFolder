@@ -82,7 +82,9 @@ export const updateBoard = async (req, res) => {
   try {
     const { uid, id } = req.params;
     const updates = req.body;
-    const user = await User.findOne({ uid });
+    const user = await User.findOne({ uid }).select(
+      "-__v -createdAt -updatedAt"
+    );
     if (!user) {
       return res.status(404).json({ message: "user not found" });
     }
@@ -98,6 +100,21 @@ export const updateBoard = async (req, res) => {
     return res
       .status(200)
       .json({ message: "board updated successfully", data: updatedColumn });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+export const getBoardData = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const board = await Board.findOne({ _id: id });
+    if (!board) {
+      return res.status(404).json({ message: "board not found" });
+    }
+    res.status(200).json({ success: true, data: board });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

@@ -6,6 +6,7 @@ import {
   addBoard,
   deleteBoard,
   getBoard,
+  getBoardData,
   updateBoard,
 } from "../controller/BoardController.js";
 import {
@@ -31,6 +32,7 @@ router.post("/user/login/:uid", logInUser);
 
 router.post("/user/:uid/board", addBoard);
 router.get("/user/:uid/board", getBoard);
+router.get("/board/:id", getBoardData);
 router.delete("/user/:uid/board/:id", deleteBoard);
 router.patch("/user/:uid/board/:id", updateBoard);
 

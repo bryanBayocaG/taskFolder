@@ -1,5 +1,5 @@
 import ColumnContainer from "@/components/ColumnContainer";
-import { BackEndColumnData, BackEndTaskData, Column, ID, Task } from "@/type";
+import { BackEndBoardData, BackEndColumnData, BackEndTaskData, Column, ID, Task } from "@/type";
 import { useEffect, useMemo, useState } from "react";
 import { DndContext, DragOverlay, DragStartEvent, DragEndEvent, useSensor, useSensors, PointerSensor, DragOverEvent, TouchSensor, KeyboardSensor } from "@dnd-kit/core"
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
@@ -25,6 +25,8 @@ function MineTask() {
 
     const tasks = useTaskStore((state) => state.tasks)
     const setTasks = useTaskStore((state) => state.setTasks);
+
+    const [boardData, setBoardData] = useState<BackEndBoardData>()
 
     const [isLoading, setLoading] = useState(false);
     const columnsID = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -96,9 +98,28 @@ function MineTask() {
                 }
             }
         }
+        const fetchBoardData = async () => {
+            try {
+                const res = await fetch(`${backEndBaseURL}/api/board/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                })
+                if (!res.ok) {
+                    throw new Error('Failed to fetch board data');
+                }
+                const data = await res.json()
+                setBoardData(data.data)
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new Error(error.message)
+                }
+            }
+        }
         fetchColumns();
         fetchTasks();
-
+        fetchBoardData();
     }, [currentAuthUID, setColumns, setTasks, id])
     return (
         <>
@@ -163,9 +184,17 @@ function MineTask() {
                                                 <label htmlFor="boardName">Board name</label>
                                                 <div className="flex gap-4 justify-items-center">
                                                     <input
+                                                        value={boardData?.boardName || ""}
+                                                        onChange={e =>
+                                                            setBoardData(prev => ({
+                                                                ...prev!,
+                                                                boardName: e.target.value
+                                                            }))
+                                                        }
                                                         className="p-2 rounded-md w-full bg-gray-800 focus:bg-transparent"
                                                         type="text"
-                                                        id="boardName" />
+                                                        id="boardName"
+                                                    />
                                                     <button className="border border-gray-400 px-4 rounded-lg hover:bg-gray-700">
                                                         Rename
                                                     </button>
@@ -175,13 +204,20 @@ function MineTask() {
                                                 <label htmlFor="boardDescription">Board decription</label>
                                                 <div className="flex gap-2">
                                                     <Textarea
+                                                        value={boardData?.description || ""}
+                                                        onChange={e =>
+                                                            setBoardData(prev => ({
+                                                                ...prev!,
+                                                                description: e.target.value
+                                                            }))
+                                                        }
                                                         className=""
                                                         placeholder="Enter your description"
                                                         variant="underlined"
                                                     />
                                                     <div className="flex flex-col items-center ">
                                                         <button className="border border-gray-400 py-1 px-6 rounded-lg hover:bg-gray-700 mt-auto">
-                                                            Apply
+                                                            Change
                                                         </button>
                                                     </div>
                                                 </div>

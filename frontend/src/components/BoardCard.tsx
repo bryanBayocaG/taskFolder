@@ -20,8 +20,9 @@ const BoardCard = ({ name, desc, id, img }: Props) => {
         <button onClick={() => { handleClik(id) }}>
             <Card isFooterBlurred isHoverable className="w-full  md:h-[240px] lg:h-[290px] col-span-12 sm:col-span-7">
                 <CardHeader className="absolute z-10 top-1 flex-col items-start">
-                    <div className="flex">
+                    <div className="flex items-center gap-2">
                         <p className="text-tiny text-white/60 uppercase font-bold">Members</p>
+                        <p className="text-tiny text-white/60">Feature comming soon...</p>
                     </div>
                     <h4 className="text-white/90 font-medium text-xl capitalize">{name}</h4>
                 </CardHeader>
