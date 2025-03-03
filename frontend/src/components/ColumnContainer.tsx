@@ -150,7 +150,7 @@ function ColumnContainer(props: Props) {
                     e.stopPropagation();
                     handleDeleteCol(column.id)
                 }}>
-                    {isLoading ? <div>Loading...</div> :
+                    {isLoading ? <div className="w-6 h-6 border-4 border-sky-500 border-t-transparent rounded-full animate-spin" /> :
                         <FaRegTrashAlt className="text-red-700" />
                     }
                 </Button>
