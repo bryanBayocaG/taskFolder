@@ -141,7 +141,9 @@ export default function SignInFormDrawer({ variant, size, className }: Props) {
                                                 <Input id="email" type="email" placeholder="m@example.com"
                                                     value={email}
                                                     onChange={e => setEmail(e.target.value)}
-                                                    required />
+                                                    required
+                                                    color="primary"
+                                                />
                                             </div>
                                             <div className="grid gap-2">
                                                 <div className="flex items-center">
@@ -158,7 +160,7 @@ export default function SignInFormDrawer({ variant, size, className }: Props) {
                                                     onChange={e => setPassword(e.target.value)}
                                                     required />
                                             </div>
-                                            <Button type="submit" className="w-full bg-[#369BEB] hover:bg-[#3666eb]">
+                                            <Button type="submit" className="w-full bg-sky-500 hover:bg-sky-400">
                                                 Log in
                                             </Button>
                                             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-slate-200 dark:after:border-slate-800">
@@ -170,7 +172,7 @@ export default function SignInFormDrawer({ variant, size, className }: Props) {
                                         </div>
                                     </form>
                                     <div className="mt-2">
-                                        <Button className="w-full" onPress={() => { handleSignInWithGoogle() }}>
+                                        <Button className="w-full bg-transparent outline outline-sky-500 rounded-sm hover:bg-sky-500" onPress={() => { handleSignInWithGoogle() }}>
                                             <FcGoogle />Sign in with Google
                                         </Button>
                                     </div>
