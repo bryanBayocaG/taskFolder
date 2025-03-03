@@ -159,7 +159,7 @@ function MineTask() {
                         <div className="h-[90px] md:h-[120px]"></div>
 
                         <div className="flex justify-center items-center">
-                            <h1 className="font-medium text-lg md:text-xl text-gray-300">{boardData?.boardName} - Board</h1>
+                            <h1 className="font-medium text-lg md:text-xl text-gray-300 capitalize">{boardData?.boardName} - Board</h1>
                         </div>
                         <Tabs aria-label="Options" className="mx-10" color="primary" variant="underlined" /* defaultSelectedKey="settings" */>
                             <Tab
