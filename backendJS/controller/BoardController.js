@@ -6,7 +6,7 @@ export const addBoard = async (req, res) => {
   try {
     const { uid } = req.params;
     const user = await User.findOne({ uid });
-    const { boardName, description, boardImg } = req.body;
+    const { boardName, description, boardImg, yesToDefaultColumn } = req.body;
     if (!boardName || !description) {
       return res
         .status(400)
@@ -26,6 +26,30 @@ export const addBoard = async (req, res) => {
       createdBy: user._id,
     });
     await newBoard.save();
+
+    if (yesToDefaultColumn) {
+      const defaultColumns = [
+        {
+          columnName: "To Do",
+          position: 0,
+          createdBy: user._id,
+          boardFrom: newBoard._id,
+        },
+        {
+          columnName: "In Progress",
+          position: 1,
+          createdBy: user._id,
+          boardFrom: newBoard._id,
+        },
+        {
+          columnName: "Done",
+          position: 2,
+          createdBy: user._id,
+          boardFrom: newBoard._id,
+        },
+      ];
+      await Column.insertMany(defaultColumns);
+    }
     res
       .status(201)
       .json({ success: true, message: "board created", data: newBoard });
@@ -95,13 +119,11 @@ export const updateBoard = async (req, res) => {
       return res.status(404).json({ message: "board not found" });
     }
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "board updated successfully",
-        data: updatedColumn,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "board updated successfully",
+      data: updatedColumn,
+    });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ error: error.message });

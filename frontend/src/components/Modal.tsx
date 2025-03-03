@@ -33,6 +33,7 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
     const addTask = useTaskStore((state) => state.addTask);
     const [nameInput, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [defaultColumn, setDefaultColumn] = useState(false);
     const [confirmationText, setConfirmationText] = useState("");
     const navigate = useNavigate();
 
@@ -125,7 +126,8 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
                 },
                 body: JSON.stringify({
                     boardName: nameInput.toLocaleLowerCase(),
-                    description: description.toLocaleLowerCase()
+                    description: description.toLocaleLowerCase(),
+                    yesToDefaultColumn: defaultColumn,
                 })
             })
             if (res.status === 409) {
@@ -146,6 +148,10 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
             }
         }
     }
+
+    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setDefaultColumn(e.target.value === "ok");
+    };
 
     const deleteBoard = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
@@ -288,6 +294,13 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
                                             value={description}
                                             onChange={e => setDescription(e.target.value)}
                                         />
+                                        <fieldset className="border border-gray-300 p-2 rounded-md mt-2">
+                                            <legend className="font-light p-2">Include default columns?</legend>
+                                            <div className="flex gap-5 text-xs">
+                                                <label><input type="radio" name="confirmation" value="no" checked={!defaultColumn} onChange={handleRadioChange} /> Don't include default columns.</label>
+                                                <label><input type="radio" name="confirmation" value="ok" checked={defaultColumn} onChange={handleRadioChange} /> Yes, include default columns.</label>
+                                            </div>
+                                        </fieldset>
                                         <div className="flex justify-center w-full mt-5">
                                             <Button variant="outline" type="submit" size="lg">
                                                 Submit
