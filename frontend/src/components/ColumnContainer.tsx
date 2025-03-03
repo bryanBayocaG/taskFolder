@@ -25,6 +25,7 @@ function ColumnContainer(props: Props) {
     const deleteCol = useColumnStore((state) => state.deleteColumn);
     const updateColumn = useColumnStore((state) => state.updateColumn);
     const [editMode, setEditMode] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const taskIDs = useMemo(() => {
         return tasks.map((task) => task.id);
@@ -50,6 +51,7 @@ function ColumnContainer(props: Props) {
     }
     const handleDeleteCol = async (id: ID) => {
         try {
+            setIsLoading(true)
             const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/column/${id}`, {
                 method: "DELETE",
                 headers: {
@@ -67,8 +69,9 @@ function ColumnContainer(props: Props) {
             if (error instanceof Error) {
                 throw new Error(error.message)
             }
+        } finally {
+            setIsLoading(false)
         }
-
     }
     const handleUpdateCol = async (colID: ID) => {
         try {
@@ -144,7 +147,9 @@ function ColumnContainer(props: Props) {
                     e.stopPropagation();
                     handleDeleteCol(column.id)
                 }}>
-                    <FaRegTrashAlt className="text-red-700" />
+                    {isLoading ? <div>Loading...</div> :
+                        <FaRegTrashAlt className="text-red-700" />
+                    }
                 </Button>
             </div>
             <div className="flex flex-grow flex-col gap-4 p-3 overflow-x-hidden overflow-y-auto h-[400px] min-h-[400px]">
@@ -154,7 +159,7 @@ function ColumnContainer(props: Props) {
                     ))}
                 </SortableContext >
             </div>
-            <ModalPopUp name="Add Task2" useFor="addTask" refID={column.id} />
+            <ModalPopUp name="Add task" useFor="addTask" refID={column.id} />
         </div>
     )
 }

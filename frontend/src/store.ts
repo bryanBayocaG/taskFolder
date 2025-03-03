@@ -181,6 +181,9 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
             try {
               const res = await fetch(`${backEndBaseURL}/api/task/${id}`, {
                 method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
               });
 
               const data = await res.json();
