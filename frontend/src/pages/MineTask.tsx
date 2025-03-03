@@ -157,7 +157,11 @@ function MineTask() {
                     :
                     <>
                         <div className="h-[90px] md:h-[120px]"></div>
-                        <Tabs aria-label="Options" className="mx-10" /* defaultSelectedKey="settings" */>
+
+                        <div className="flex justify-center items-center">
+                            <h1 className="font-medium text-lg md:text-xl text-gray-300">{boardData?.boardName} - Board</h1>
+                        </div>
+                        <Tabs aria-label="Options" className="mx-10" color="primary" variant="underlined" /* defaultSelectedKey="settings" */>
                             <Tab
                                 key="tasks"
                                 title={
@@ -218,7 +222,7 @@ function MineTask() {
                                 }
                             >
                                 <div className="h-[75vh] w-full justify-center m-auto flex  md:p-10">
-                                    <Tabs aria-label="Options" placement="start" >
+                                    <Tabs aria-label="Options" placement="start" color="primary" variant="bordered" >
                                         <Tab key="general"
                                             className=""
                                             title={
@@ -241,7 +245,7 @@ function MineTask() {
                                                                 boardName: e.target.value
                                                             }))
                                                         }
-                                                        className="p-2 rounded-md w-full bg-gray-800 focus:bg-transparent"
+                                                        className="p-2 rounded-md w-full bg-gray-800 focus:bg-transparent focus:ring-2 focus:ring-sky-500 focus:outline-none"
                                                         type="text"
                                                         id="boardName"
                                                     />
@@ -261,10 +265,11 @@ function MineTask() {
                                                         }
                                                         placeholder="Enter your description"
                                                         variant="underlined"
+                                                        color="primary"
                                                     />
                                                 </div>
                                                 <div className="flex flex-col items-end mt-5">
-                                                    <button onClick={() => { handleBoardEdit() }} className="border border-gray-400 py-1 px-6 rounded-lg hover:bg-gray-700 mt-auto">
+                                                    <button onClick={() => { handleBoardEdit() }} className="border border-sky-500 py-1 px-6 rounded-lg hover:bg-sky-500 mt-auto">
                                                         Apply changes
                                                     </button>
                                                 </div>
