@@ -81,7 +81,9 @@ export const deleteColumns = async (req, res) => {
         .status(404)
         .json({ message: "column not found or not deleted" });
     }
-    return res.status(200).json({ message: "column deleted successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "column deleted successfully" });
   } catch (error) {
     if (error instanceof Error) {
       return res

@@ -59,6 +59,9 @@ function ColumnContainer(props: Props) {
                 },
             })
             const data = await res.json();
+            if (!data.success) {
+                throw new Error(data.message)
+            }
             if (data.message === "column contains tasks") {
                 toast.warning("Column contains tasks, empty it first")
                 return
