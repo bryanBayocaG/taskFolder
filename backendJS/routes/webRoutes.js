@@ -44,8 +44,8 @@ router.patch("/column/reorder/", reorderColumns);
 
 router.get("/user/:uid/task", getTask);
 router.post("/user/:uid/task/:id", addTask);
-router.patch("/user/:uid/task/:id", editTask);
-router.delete("/user/:uid/task/:id", deleteTask);
+router.patch("/task/:id", editTask);
+router.delete("/task/:id", deleteTask);
 router.patch("/task/reorder/", reorderTask);
 
 export default router;

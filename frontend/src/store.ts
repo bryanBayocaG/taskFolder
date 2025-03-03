@@ -38,6 +38,7 @@ type TaskStore = {
   tasks: Task[];
   setTasks: (tasks: Task[]) => void;
   addTask: (task: Task) => void;
+  deleteTask: (id: ID) => void;
   moveTask: (
     activeTaskID: ID,
     overTaskID: ID,
@@ -172,7 +173,29 @@ export const useTaskStore = create<TaskStore, [["zustand/persist", TaskStore]]>(
       tasks: [],
       setTasks: (newTasks) => set({ tasks: newTasks }),
       addTask: (task) => set((state) => ({ tasks: [...state.tasks, task] })),
+      deleteTask: async (id) =>
+        set((state) => {
+          const updatedTasks = state.tasks.filter((task) => task.id !== id);
 
+          const deleteTaskFromAPI = async () => {
+            try {
+              const res = await fetch(`${backEndBaseURL}/api/task/${id}`, {
+                method: "DELETE",
+              });
+
+              const data = await res.json();
+              if (data) {
+                console.log("data", data);
+              }
+            } catch (error) {
+              console.error("Error deleting task:", error);
+              return state;
+            }
+          };
+
+          deleteTaskFromAPI();
+          return { tasks: updatedTasks };
+        }),
       moveTask: async (
         activeTaskID,
         overTaskID,

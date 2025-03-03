@@ -87,7 +87,12 @@ export const editTask = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
   try {
-    return res.json(200).json({ message: "delTask" });
+    const { id } = req.params;
+    const result = await Task.deleteOne({ _id: id });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: "task not found or not deleted" });
+    }
+    return res.json(200).json({ message: "task deleted" });
   } catch (error) {
     if (error instanceof Error) {
       return res

@@ -26,6 +26,7 @@ function MineTask() {
 
     const tasks = useTaskStore((state) => state.tasks)
     const setTasks = useTaskStore((state) => state.setTasks);
+    const deleteTasks = useTaskStore((state) => state.deleteTask);
 
     const [boardData, setBoardData] = useState<BackEndBoardData>()
 
@@ -156,7 +157,7 @@ function MineTask() {
                     :
                     <>
                         <div className="h-[90px] md:h-[120px]"></div>
-                        <Tabs aria-label="Options" className="mx-10" defaultSelectedKey="settings">
+                        <Tabs aria-label="Options" className="mx-10" /* defaultSelectedKey="settings" */>
                             <Tab
                                 key="tasks"
                                 title={
@@ -277,7 +278,7 @@ function MineTask() {
                                                             <p className="text-xs">Once you delete a board, there is no going back. Please be certain.</p>
                                                         </div>
                                                         <div className="flex justify-center md:justify-end flex-1">
-                                                            <ModalPopUp name="Delete board" Icon={IoTrashOutline} useFor="deleteBoard" />
+                                                            <ModalPopUp name="Delete board" refID={id} Icon={IoTrashOutline} useFor="deleteBoard" />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -300,7 +301,6 @@ function MineTask() {
                                     </Tabs>
                                 </div>
                             </Tab>
-
                         </Tabs>
                     </>
                 }
@@ -311,8 +311,7 @@ function MineTask() {
         </>
     )
     function deleteTask(id: ID) {
-        const newTasks = tasks.filter((task) => task.id !== id);
-        setTasks(newTasks)
+        deleteTasks(id)
     }
     function updateTask(id: ID, content: string) {
         const newTask = tasks.map((task) => {
@@ -320,7 +319,6 @@ function MineTask() {
             return { ...task, content }
         });
         setTasks(newTask)
-
     }
 
     function onDragStartFNC(e: DragStartEvent) {

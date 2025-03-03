@@ -16,6 +16,7 @@ import { backEndBaseURL } from "@/utils/baseUrl";
 import { Column, Task } from "@/type";
 import { toast } from "react-toastify";
 import { IconType } from "react-icons";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
     name?: string;
@@ -33,6 +34,7 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
     const [nameInput, setName] = useState("");
     const [description, setDescription] = useState("");
     const [confirmationText, setConfirmationText] = useState("");
+    const navigate = useNavigate();
 
     const addColumnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         try {
@@ -152,6 +154,18 @@ export default function ModalPopUp({ name, useFor, refID, fetchAgain, Icon }: Pr
                 toast.error("Text don't match!")
                 return
             }
+            const res = await fetch(`${backEndBaseURL}/api/user/${currentAuthUID}/board/${refID}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            const data = await res.json();
+            if (data.message === "board contains columns") {
+                toast.warning("Board contains columns. Delete all columns first.")
+                return;
+            }
+            navigate('/myboard')
             toast.success("Board deleted!")
         } catch (error) {
             if (error instanceof Error) {
