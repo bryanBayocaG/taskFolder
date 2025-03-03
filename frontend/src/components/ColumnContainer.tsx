@@ -140,7 +140,7 @@ function ColumnContainer(props: Props) {
                     }
 
                 </div>
-                <Button size="default" variant="ghost" onClick={(e) => {
+                <Button className="hover:scale-105 transition-all" size="icon" variant="ghost" onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteCol(column.id)
                 }}>

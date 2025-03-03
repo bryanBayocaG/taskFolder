@@ -38,33 +38,33 @@ export default function Navbar() {
   return (
     <header className="absolute w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-3 z-[15] top-0">
       <div className="container mx-auto flex h-fit max-w-6xl items-center justify-between px-4 md:px-6">
-        <a href={currentAuth ? `/myboard` : "/"} className="flex items-center gap-2" >
+        <a href={currentAuth ? `/myboard` : "/"} className="flex items-center gap-2 hover:scale-105">
           <div className="h-10 w-10 md:h-20 md:w-20 ">
             <img src="/KanbanDrk.svg" alt="" className="hidden dark:block" />
             <img src="/Kanban.svg" alt="" className="dark:hidden" />
           </div>
-          <span className="font-bold">Task Folder</span>
+          <span className="font-bold">Task<span className="text-sky-500">Folder</span></span>
         </a>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           {!currentAuth ?
             <>
               <a
                 href="/about"
-                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
               >
                 About
               </a>
               <a
                 href="/services"
-                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
               >
                 Services
               </a>
               <a
                 href="/contact"
-                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
               >
                 Contact
               </a>
@@ -73,7 +73,7 @@ export default function Navbar() {
             :
             <a
               href="/myboard"
-              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
             >
               My boards
             </a>
