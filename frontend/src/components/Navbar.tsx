@@ -49,27 +49,26 @@ export default function Navbar() {
           {!currentAuth ?
             <>
               <a
-                href="/about"
+                href="#"
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
               >
                 About
               </a>
               <a
-                href="/services"
+                href="#"
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
               >
                 Services
               </a>
               <a
-                href="/contact"
+                href="#"
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
               >
                 Contact
               </a>
             </>
-
             :
             <a
               href="/myboard"
