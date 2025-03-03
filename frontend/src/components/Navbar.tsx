@@ -77,8 +77,6 @@ export default function Navbar() {
               My boards
             </a>
           }
-
-
         </nav>
         <div className="flex items-center gap-4">
           <DropdownMenu>
@@ -120,27 +118,37 @@ export default function Navbar() {
                     <p className="text-xs text-gray-500 dark:text-gray-400">{userEmail}</p>
                   </div>
                 </div>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                {!currentAuth ?
+                  <>
+                    <a
+                      href="#"
+                      className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
-                >
-                  About
-                </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                    >
+                      About
+                    </a>
+                    <a
+                      href="#"
+                      className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
-                >
-                  Services
-                </a>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-
-                >
-                  Contact
-                </a>
+                    >
+                      Services
+                    </a>
+                    <a
+                      href="#"
+                      className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
+                    >
+                      Contact
+                    </a>
+                  </>
+                  :
+                  <a
+                    href="/myboard"
+                    className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
+                  >
+                    My boards
+                  </a>
+                }
                 {currentAuth &&
                   <a
                     onClick={HandleSignOut}
