@@ -49,21 +49,21 @@ export default function Navbar() {
           {!currentAuth ?
             <>
               <a
-                href="#"
+                href="#about"
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
               >
                 About
               </a>
               <a
-                href="#"
+                href="#services"
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
               >
                 Services
               </a>
               <a
-                href="#"
+                href="#contact"
                 className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
               >
                 Contact
@@ -121,21 +121,21 @@ export default function Navbar() {
                 {!currentAuth ?
                   <>
                     <a
-                      href="#"
+                      href="#about"
                       className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
                     >
                       About
                     </a>
                     <a
-                      href="#"
+                      href="#services"
                       className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
 
                     >
                       Services
                     </a>
                     <a
-                      href="#"
+                      href="#contact"
                       className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-sky-500"
                     >
                       Contact
