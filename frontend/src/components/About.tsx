@@ -19,9 +19,9 @@ const About = () => {
                         <div className="h-full">
 
                         </div>
-                        <div className=" w-full ">
+                        <div className=" w-full lg:px-96 md:px-44 px-10">
                             <p className="relative text-center text-xs text-gray-300 font-medium md:text-base lg:text-lg z-10 ">
-                                <span className="text-sky-500">Taskfolder</span> is one of my passion projects, built to challenge myself in the <span className="text-sky-500">MERN</span> stack. It’s a web app designed for efficient task management, featuring a <span className="text-sky-500">kanban board</span> with drag-and-drop functionality powered by <span className="text-sky-500">DND Kit</span>. I used <span className="text-sky-500">Zustand</span> for state management, ensuring that task positions persist in the database. The backend is a secure and scalable <span className="text-sky-500">RESTful API</span> built with Node.js, Express.js, and MongoDB, while <span className="text-sky-500">Tailwind CSS</span> enhances responsiveness and design. Deployed on <span className="text-sky-500">Vercel</span>, Taskfolder is built for performance, scalability, and a seamless user experience.
+                                <span className="text-sky-500">Taskfolder</span> is my <span className="text-sky-500">MERN</span> stackpassion project—a task management web app with a kanban board and drag-and-drop powered by <span className="text-sky-500">DND Kit</span>. Zustand ensures task persistence, while a secure <span className="text-sky-500">RESTful API</span> (Node.js, Express.js, MongoDB) handles the backend. Styled with Tailwind CSS and deployed on Vercel, it’s built for performance, scalability, and a seamless user experience.
                             </p>
                         </div>
                     </div>
